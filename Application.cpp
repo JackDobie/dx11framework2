@@ -668,9 +668,10 @@ void Application::moveForward(int objectNumber)
 {
 	if (_gameObjects.size() - 1 >= objectNumber)
 	{
-		XMFLOAT3 position = _gameObjects[objectNumber]->GetPosition();
-		position.z -= 0.02f;
-		_gameObjects[objectNumber]->SetPosition(position);
+		//XMFLOAT3 position = _gameObjects[objectNumber]->GetPosition();
+		//position.z -= 0.02f;
+		_gameObjects[objectNumber]->MovePosition(XMFLOAT3(0.0f, 0.0f, 5.0f));
+		//_gameObjects[objectNumber]->SetPosition(position);
 	}
 }
 
@@ -678,9 +679,10 @@ void Application::moveBackward(int objectNumber)
 {
 	if (_gameObjects.size() + 2 >= objectNumber)
 	{
-		XMFLOAT3 position = _gameObjects[objectNumber - 2]->GetPosition();
-		position.z += 0.02f;
-		_gameObjects[objectNumber - 2]->SetPosition(position);
+		_gameObjects[objectNumber - 2]->MovePosition(XMFLOAT3(0.0f, 0.0f, -5.0f));
+		//XMFLOAT3 position = _gameObjects[objectNumber - 2]->GetPosition();
+		//position.z += 0.02f;
+		//_gameObjects[objectNumber - 2]->SetPosition(position);
 	}
 }
 
