@@ -3,12 +3,16 @@
 GameObject::GameObject(string type, Geometry geometry, Material material)
 {
 	_type = type;
-	appearance = new Appearance(geometry, material);
+	appearance = new Appearance(geometry, material, nullptr);
 
 	_parent = nullptr;
 	//appearance->textureRV = nullptr;
 	transform = new Transform();
-	particleModel = new ParticleModel(new Transform());
+	particleModel = new ParticleModel(transform, true, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
+	/*if (_type.find("Cube") != string::npos)
+	{
+		particleModel->SetVelocity(XMFLOAT3(2.0f, 0.0f, -4.0f));
+	}*/
 }
 
 GameObject::~GameObject()
@@ -34,10 +38,12 @@ void GameObject::Update(float t)
 		XMStoreFloat4x4(&_world, this->GetWorldMatrix() * _parent->GetWorldMatrix());
 	}
 
-	if(_type.find("Cube") != string::npos)
+	/*if(_type.find("Cube") != string::npos)
 	{
 		Debug::Print(deltaTime);
-	}
+	}*/
+
+	particleModel->Update(t);
 	/*static int x = 0;
 	Debug::Print(x);
 	x++;*/
@@ -54,11 +60,11 @@ void GameObject::Draw(ID3D11DeviceContext * pImmediateContext)
 	pImmediateContext->DrawIndexed(appearance->geometry.numberOfIndices, 0, 0);
 }
 
-void GameObject::MovePosition(XMFLOAT3 pos)
+void GameObject::AddPosition(XMFLOAT3 pos)
 {
 	transform->position = XMFLOAT3(transform->position.x + (pos.x * deltaTime), transform->position.y + (pos.y * deltaTime), transform->position.z + (pos.z * deltaTime));
 }
-void GameObject::ChangeRotation(XMFLOAT3 rot)
+void GameObject::AddRotation(XMFLOAT3 rot)
 {
 	transform->rotation = XMFLOAT3(transform->rotation.x + (rot.x * deltaTime), transform->rotation.y + (rot.y * deltaTime), transform->rotation.z + (rot.z * deltaTime));
 }

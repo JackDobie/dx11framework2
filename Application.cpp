@@ -668,10 +668,8 @@ void Application::moveForward(int objectNumber)
 {
 	if (_gameObjects.size() - 1 >= objectNumber)
 	{
-		//XMFLOAT3 position = _gameObjects[objectNumber]->GetPosition();
-		//position.z -= 0.02f;
-		_gameObjects[objectNumber]->MovePosition(XMFLOAT3(0.0f, 0.0f, 5.0f));
-		//_gameObjects[objectNumber]->SetPosition(position);
+		_gameObjects[objectNumber]->GetParticleModel()->AddVelOrAcc(XMFLOAT3(1.0f, 0.0f, 0.0f));
+		//_gameObjects[objectNumber]->AddPosition(XMFLOAT3(0.0f, 0.0f, 5.0f));
 	}
 }
 
@@ -679,10 +677,8 @@ void Application::moveBackward(int objectNumber)
 {
 	if (_gameObjects.size() + 2 >= objectNumber)
 	{
-		_gameObjects[objectNumber - 2]->MovePosition(XMFLOAT3(0.0f, 0.0f, -5.0f));
-		//XMFLOAT3 position = _gameObjects[objectNumber - 2]->GetPosition();
-		//position.z += 0.02f;
-		//_gameObjects[objectNumber - 2]->SetPosition(position);
+		_gameObjects[objectNumber - 2]->GetParticleModel()->AddVelOrAcc(XMFLOAT3(-1.0f, 0.0f, 0.0f));
+		//_gameObjects[objectNumber - 2]->AddPosition(XMFLOAT3(0.0f, 0.0f, -5.0f));
 	}
 }
 
@@ -709,20 +705,20 @@ void Application::Update()
 	}
 
 	// Move gameobject
-	if (GetAsyncKeyState('1'))
+	if (GetAsyncKeyState('1') & 0x8000 != 0)
 	{
 		moveForward(1);
 	}
-	if (GetAsyncKeyState('2'))
+	if (GetAsyncKeyState('2') & 0x8000 != 0)
 	{
 		moveBackward(3);
 	}
 
-	if (GetAsyncKeyState('3'))
+	if (GetAsyncKeyState('3') & 0x8000 != 0)
 	{
 		moveForward(2);
 	}
-	if (GetAsyncKeyState('4'))
+	if (GetAsyncKeyState('4') & 0x8000 != 0)
 	{
 		moveBackward(4);
 	}
@@ -746,6 +742,8 @@ void Application::Update()
 	}
 
 	deltaTime -= FPS_60;
+
+	Draw();
 }
 
 void Application::Draw()
