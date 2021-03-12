@@ -7,7 +7,7 @@
 class ParticleModel
 {
 public:
-	ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration);
+	ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass);
 	~ParticleModel();
 
 	void Update(float deltaTime);
@@ -24,22 +24,36 @@ public:
 	void SetScale(float x, float y, float z) { transform->scale.x = x; transform->scale.y = y; transform->scale.z = z; }
 	XMFLOAT3 GetScale() const { return transform->scale; }
 
-	void SetVelocity(XMFLOAT3 newVelocity) { velocity = XMLoadFloat3(&newVelocity); }
+	void SetVelocity(XMFLOAT3 newVelocity) { velocity = newVelocity; }
 	void AddVelocity(XMFLOAT3 addVel);
-	void SetAcceleration(XMFLOAT3 newAcceleration) { acceleration = XMLoadFloat3(&newAcceleration); }
+	void SetAcceleration(XMFLOAT3 newAcceleration) { acceleration = newAcceleration; }
 	void AddAcceleration(XMFLOAT3 addAcc);
 
 	void AddVelOrAcc(XMFLOAT3 addF3);
 
 	void SetUsingConstAccel(bool _useConstAccel) { useConstAccel = _useConstAccel; }
+
+	float GetMass() { return objectMass; }
+	void SetMass(float newMass) { objectMass = newMass; }
+
+	XMFLOAT3 GetNetForce() { return netForce; }
+	void SetNetForce(XMFLOAT3 newNetForce) { netForce = newNetForce; }
 private:
-	void moveConstVelocity(float deltaTime);
-	void moveConstAcceleration(float deltaTime);
+	//void moveConstVelocity(float deltaTime);
+	//void moveConstAcceleration(float deltaTime);
+	void Move(float deltaTime);
+
+	void UpdateNetForce();
+	void UpdateAccel();
 
 	Transform* transform;
 
-	XMVECTOR velocity;
-	XMVECTOR acceleration;
+	XMFLOAT3 velocity;
+	XMFLOAT3 acceleration;
 
 	bool useConstAccel;
+
+	float objectMass;
+
+	XMFLOAT3 netForce;
 };

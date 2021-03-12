@@ -8,7 +8,7 @@ GameObject::GameObject(string type, Geometry geometry, Material material)
 	_parent = nullptr;
 	//appearance->textureRV = nullptr;
 	transform = new Transform();
-	particleModel = new ParticleModel(transform, true, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
+	particleModel = new ParticleModel(transform, true, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), 5.0f);
 	/*if (_type.find("Cube") != string::npos)
 	{
 		particleModel->SetVelocity(XMFLOAT3(2.0f, 0.0f, -4.0f));
@@ -38,15 +38,7 @@ void GameObject::Update(float t)
 		XMStoreFloat4x4(&_world, this->GetWorldMatrix() * _parent->GetWorldMatrix());
 	}
 
-	/*if(_type.find("Cube") != string::npos)
-	{
-		Debug::Print(deltaTime);
-	}*/
-
 	particleModel->Update(t);
-	/*static int x = 0;
-	Debug::Print(x);
-	x++;*/
 }
 
 void GameObject::Draw(ID3D11DeviceContext * pImmediateContext)
