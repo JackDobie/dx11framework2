@@ -6,13 +6,12 @@ GameObject::GameObject(string type, Geometry geometry, Material material)
 	appearance = new Appearance(geometry, material, nullptr);
 
 	_parent = nullptr;
-	//appearance->textureRV = nullptr;
 	transform = new Transform();
 	particleModel = new ParticleModel(transform, true, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), 5.0f);
-	/*if (_type.find("Cube") != string::npos)
+	if (_type.find("Cube") != string::npos)
 	{
-		particleModel->SetVelocity(XMFLOAT3(2.0f, 0.0f, -4.0f));
-	}*/
+		particleModel->AddForceX(0.05f);
+	}
 }
 
 GameObject::~GameObject()

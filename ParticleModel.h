@@ -2,6 +2,7 @@
 
 #include <directxmath.h>
 #include <d3d11.h>
+#include <vector>
 #include "Transform.h"
 
 class ParticleModel
@@ -38,9 +39,13 @@ public:
 
 	XMFLOAT3 GetNetForce() { return netForce; }
 	void SetNetForce(XMFLOAT3 newNetForce) { netForce = newNetForce; }
+
+	std::vector<XMFLOAT3> GetForces() { return forces; }
+	void AddForce(XMFLOAT3 newForce) { forces.push_back(newForce); }
+	void AddForceX(float x) { forces.push_back(XMFLOAT3(x, 0.0f, 0.0f)); }
+	void AddForceY(float y) { forces.push_back(XMFLOAT3(0.0f, y, 0.0f)); }
+	void AddForceZ(float z) { forces.push_back(XMFLOAT3(0.0f, 0.0f, z)); }
 private:
-	//void moveConstVelocity(float deltaTime);
-	//void moveConstAcceleration(float deltaTime);
 	void Move(float deltaTime);
 
 	void UpdateNetForce();
@@ -56,4 +61,5 @@ private:
 	float objectMass;
 
 	XMFLOAT3 netForce;
+	std::vector<XMFLOAT3> forces;
 };
