@@ -10,6 +10,7 @@ ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT
 	useGravity = gravity;
 	netForce = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	deltaTime = _deltaTime;
+	thrustEnabled = false;
 
 	/*if(useGravity)
 		AddForceY(-(objectMass * 9.8f));*/
@@ -66,7 +67,14 @@ void ParticleModel::UpdateNetForce()
 	}
 
 	if (useGravity)
+	{
 		netForce.y -= (objectMass * 0.5f); //mass * gravity
+
+		if (thrustEnabled)
+		{
+			netForce.y += (objectMass * 0.5f) * 1.5f;
+		}
+	}
 }
 
 void ParticleModel::UpdateAccel()
@@ -88,10 +96,18 @@ void ParticleModel::Move()
 	{
 		if (transform->position.y < 0.5f) //replace with object size or add collision later on
 		{
+			// stop movement
 			acceleration.y = 0.0f;
 			velocity.y = 0.0f;
+			netForce.y = 0.0f;
 			transform->position.y = 0.5f;
 		}
+		if (transform->position.y < 0.75f)
+		{
+			thrustEnabled = true;
+		}
+		else
+			thrustEnabled = false;
 	}
 
 	if (velocity.x < 15 && velocity.y < 15 && velocity.z < 15)

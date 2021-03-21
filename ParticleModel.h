@@ -74,4 +74,6 @@ private:
 	float deltaTime;
 
 	bool useGravity;
+
+	bool thrustEnabled;
 };

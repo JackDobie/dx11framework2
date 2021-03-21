@@ -170,7 +170,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		gameObject->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
 		gameObject->GetParticleModel()->SetMass(5.0f);
 		gameObject->GetParticleModel()->SetGravity(true);*/
-		gameObject->GetParticleModel()->AddForceX(0.5f);
+		//gameObject->GetParticleModel()->AddForceX(0.5f);
 		gameObject->SetTextureRV(_pTextureRV);
 
 		_gameObjects.push_back(gameObject);
