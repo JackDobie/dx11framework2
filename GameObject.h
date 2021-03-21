@@ -35,6 +35,7 @@ class GameObject
 {
 public:
 	GameObject(string type, Geometry geometry, Material material);
+	GameObject(string type, Geometry geometry, Material material, Transform* _transform, bool _useConstAccel, float mass, bool gravity);
 	~GameObject();
 
 	// Setters and Getters for position/rotation/scale

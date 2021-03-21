@@ -4,11 +4,12 @@
 #include <d3d11.h>
 #include <vector>
 #include "Transform.h"
+#include "Debug.h"
 
 class ParticleModel
 {
 public:
-	ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass);
+	ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float _deltaTime);
 	~ParticleModel();
 
 	void Update(float deltaTime);
@@ -40,13 +41,20 @@ public:
 	XMFLOAT3 GetNetForce() { return netForce; }
 	void SetNetForce(XMFLOAT3 newNetForce) { netForce = newNetForce; }
 
+	bool GetGravity() { return useGravity; }
+	void SetGravity(bool gravity) { useGravity = gravity; }
+
 	std::vector<XMFLOAT3> GetForces() { return forces; }
+	/// <summary> Adds a force to add constant acceleration to the object </summary>
 	void AddForce(XMFLOAT3 newForce) { forces.push_back(newForce); }
+	/// <summary> Adds a force to add constant acceleration to the object </summary>
 	void AddForceX(float x) { forces.push_back(XMFLOAT3(x, 0.0f, 0.0f)); }
+	/// <summary> Adds a force to add constant acceleration to the object </summary>
 	void AddForceY(float y) { forces.push_back(XMFLOAT3(0.0f, y, 0.0f)); }
+	/// <summary> Adds a force to add constant acceleration to the object </summary>
 	void AddForceZ(float z) { forces.push_back(XMFLOAT3(0.0f, 0.0f, z)); }
 private:
-	void Move(float deltaTime);
+	void Move();
 
 	void UpdateNetForce();
 	void UpdateAccel();
@@ -62,4 +70,8 @@ private:
 
 	XMFLOAT3 netForce;
 	std::vector<XMFLOAT3> forces;
+
+	float deltaTime;
+
+	bool useGravity;
 };

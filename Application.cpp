@@ -155,28 +155,33 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 
 	
-	GameObject * gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial);
-	gameObject->SetPosition(0.0f, 0.0f, 0.0f);
+	GameObject* gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, new Transform(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(XMConvertToRadians(90.0f), 0.0f, 0.0f), XMFLOAT3(15.0f, 15.0f, 15.0f)), true, 1.0f, false);
+	/*gameObject->SetPosition(0.0f, 0.0f, 0.0f);
 	gameObject->SetScale(15.0f, 15.0f, 15.0f);
-	gameObject->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);
+	gameObject->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);*/
 	gameObject->SetTextureRV(_pGroundTextureRV);
 
 	_gameObjects.push_back(gameObject);
 
 	for (int i = 0; i < NUMBER_OF_CUBES; i++)
 	{
-		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial);
-		gameObject->SetScale(0.5f, 0.5f, 0.5f);
+		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f + (i * 2.0f), 5.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 5.0f, true);
+		/*gameObject->SetScale(0.5f, 0.5f, 0.5f);
 		gameObject->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
+		gameObject->GetParticleModel()->SetMass(5.0f);
+		gameObject->GetParticleModel()->SetGravity(true);*/
+		gameObject->GetParticleModel()->AddForceX(0.5f);
 		gameObject->SetTextureRV(_pTextureRV);
 
 		_gameObjects.push_back(gameObject);
 	}
-	gameObject = new GameObject("donut", herculesGeometry, shinyMaterial);
-	gameObject->SetScale(0.5f, 0.5f, 0.5f);
-	gameObject->SetPosition(-4.0f, 0.5f, 10.0f);
+	gameObject = new GameObject("donut", herculesGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f, 0.5f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 5.0f, false);
+	/*gameObject->SetScale(0.5f, 0.5f, 0.5f);
+	gameObject->SetPosition(-4.0f, 0.5f, 10.0f);*/
 	gameObject->SetTextureRV(_pTextureRV);
+
 	_gameObjects.push_back(gameObject);
+
 	return S_OK;
 }
 

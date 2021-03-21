@@ -1,23 +1,28 @@
 #include "ParticleModel.h"
 
-ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass)
+ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float _deltaTime)
 {
 	transform = _transform;
 	useConstAccel = _useConstAccel;
-	//velocity = XMLoadFloat3(&initialVelocty);
-	//acceleration = XMLoadFloat3(&initialAcceleration);
 	velocity = initialVelocty;
 	acceleration = initialAcceleration;
 	objectMass = mass;
-	netForce = XMFLOAT3(0, 0, 0);
+	useGravity = gravity;
+	netForce = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	deltaTime = _deltaTime;
+
+	/*if(useGravity)
+		AddForceY(-(objectMass * 9.8f));*/
 }
 ParticleModel::~ParticleModel()
 {
 	if (transform == nullptr) delete(transform);
 }
 
-void ParticleModel::Update(float deltaTime)
+void ParticleModel::Update(float _deltaTime)
 {
+	deltaTime = _deltaTime;
+	
 	// calculate net external force
 	UpdateNetForce();
 
@@ -26,12 +31,7 @@ void ParticleModel::Update(float deltaTime)
 	UpdateAccel();
 
 	// update world position and velocity of object
-	Move(deltaTime);
-	
-	/*if (useConstAccel)
-		moveConstAcceleration(deltaTime);
-	else
-		moveConstVelocity(deltaTime);*/
+	Move();
 }
 
 void ParticleModel::AddVelocity(XMFLOAT3 addVel)
@@ -60,10 +60,13 @@ void ParticleModel::UpdateNetForce()
 	// calculate net external force
 	for each (XMFLOAT3 force in forces)
 	{
-		netForce.x += force.x;
-		netForce.y += force.y;
-		netForce.z += force.z;
+		netForce.x += force.x * deltaTime;
+		netForce.y += force.y * deltaTime;
+		netForce.z += force.z * deltaTime;
 	}
+
+	if (useGravity)
+		netForce.y -= (objectMass * 0.5f); //mass * gravity
 }
 
 void ParticleModel::UpdateAccel()
@@ -73,7 +76,7 @@ void ParticleModel::UpdateAccel()
 	acceleration.z += netForce.z / objectMass;
 }
 
-void ParticleModel::Move(float deltaTime)
+void ParticleModel::Move()
 {
 	// update world position of object by adding displacement to previously calculated position
 	XMFLOAT3 oldPos = transform->position;
@@ -81,9 +84,22 @@ void ParticleModel::Move(float deltaTime)
 	transform->position.y = oldPos.y + velocity.y * deltaTime + 0.5f * acceleration.y * deltaTime * deltaTime;
 	transform->position.z = oldPos.z + velocity.z * deltaTime + 0.5f * acceleration.z * deltaTime * deltaTime;
 
-	// update velocity of object by adding change relative to previously calculated velocity
-	XMFLOAT3 oldVel = velocity;
-	velocity.x = oldVel.x + acceleration.x * deltaTime;
-	velocity.y = oldVel.y + acceleration.y * deltaTime;
-	velocity.z = oldVel.z + acceleration.z * deltaTime;
+	if (useGravity)
+	{
+		if (transform->position.y < 0.5f) //replace with object size or add collision later on
+		{
+			acceleration.y = 0.0f;
+			velocity.y = 0.0f;
+			transform->position.y = 0.5f;
+		}
+	}
+
+	if (velocity.x < 15 && velocity.y < 15 && velocity.z < 15)
+	{
+		// update velocity of object by adding change relative to previously calculated velocity
+		XMFLOAT3 oldVel = velocity;
+		velocity.x = oldVel.x + acceleration.x * deltaTime;
+		velocity.y = oldVel.y + acceleration.y * deltaTime;
+		velocity.z = oldVel.z + acceleration.z * deltaTime;
+	}
 }

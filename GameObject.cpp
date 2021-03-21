@@ -7,11 +7,17 @@ GameObject::GameObject(string type, Geometry geometry, Material material)
 
 	_parent = nullptr;
 	transform = new Transform();
-	particleModel = new ParticleModel(transform, true, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), 5.0f);
-	if (_type.find("Cube") != string::npos)
-	{
-		particleModel->AddForceX(0.05f);
-	}
+	particleModel = new ParticleModel(transform, true, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), 1.0f, true, deltaTime);
+}
+
+GameObject::GameObject(string type, Geometry geometry, Material material, Transform* _transform, bool _useConstAccel, float mass, bool gravity)
+{
+	_type = type;
+	appearance = new Appearance(geometry, material, nullptr);
+
+	_parent = nullptr;
+	transform = _transform;
+	particleModel = new ParticleModel(transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime);
 }
 
 GameObject::~GameObject()
