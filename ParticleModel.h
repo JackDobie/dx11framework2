@@ -59,6 +59,13 @@ private:
 	void UpdateNetForce();
 	void UpdateAccel();
 
+	void MotionInFluid();
+	void DragForce(bool laminar);
+	void DragLamFlow();
+	void DragTurbFlow();
+	float dragFactor;
+	XMFLOAT3 drag;
+
 	Transform* transform;
 
 	XMFLOAT3 velocity;
@@ -74,6 +81,7 @@ private:
 	float deltaTime;
 
 	bool useGravity;
+	float gravityForce;
 
 	bool thrustEnabled;
 };

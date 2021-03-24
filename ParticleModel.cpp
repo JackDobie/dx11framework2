@@ -11,9 +11,9 @@ ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT
 	netForce = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	deltaTime = _deltaTime;
 	thrustEnabled = false;
-
-	/*if(useGravity)
-		AddForceY(-(objectMass * 9.8f));*/
+	gravityForce = 0.5f;
+	dragFactor = 0.5f;
+	drag = XMFLOAT3(0, 0, 0);
 }
 ParticleModel::~ParticleModel()
 {
@@ -23,7 +23,9 @@ ParticleModel::~ParticleModel()
 void ParticleModel::Update(float _deltaTime)
 {
 	deltaTime = _deltaTime;
-	
+
+	MotionInFluid();
+
 	// calculate net external force
 	UpdateNetForce();
 
@@ -68,13 +70,17 @@ void ParticleModel::UpdateNetForce()
 
 	if (useGravity)
 	{
-		netForce.y -= (objectMass * 0.5f); //mass * gravity
+		netForce.y -= (objectMass * gravityForce); //mass * gravity
 
 		if (thrustEnabled)
 		{
-			netForce.y += (objectMass * 0.5f) * 1.5f;
+			netForce.y += (objectMass * gravityForce) * 1.5f;
 		}
 	}
+
+	netForce.x += drag.x;
+	netForce.y += drag.y;
+	netForce.z += drag.z;
 }
 
 void ParticleModel::UpdateAccel()
@@ -118,4 +124,35 @@ void ParticleModel::Move()
 		velocity.y = oldVel.y + acceleration.y * deltaTime;
 		velocity.z = oldVel.z + acceleration.z * deltaTime;
 	}
+}
+
+void ParticleModel::MotionInFluid()
+{
+	DragForce(true);
+}
+void ParticleModel::DragForce(bool laminar)
+{
+	if (laminar)
+		DragLamFlow();
+	else
+		DragTurbFlow();
+}
+void ParticleModel::DragLamFlow()
+{
+	drag.x = -dragFactor * velocity.x;
+	drag.y = -dragFactor * velocity.y;
+	drag.z = -dragFactor * velocity.z;
+}
+void ParticleModel::DragTurbFlow()
+{
+	float velMag = sqrt((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z));
+	XMFLOAT3 unitVel;
+	XMStoreFloat3(&unitVel, XMVector3Normalize(XMLoadFloat3(&velocity)));
+
+	float dragMag = dragFactor * velMag * velMag;
+
+	drag.x = -dragMag * unitVel.x;
+	drag.y = -dragMag * unitVel.y;
+	drag.z = -dragMag * unitVel.z;
+
 }
