@@ -53,6 +53,9 @@ public:
 	void AddForceY(float y) { forces.push_back(XMFLOAT3(0.0f, y, 0.0f)); }
 	/// <summary> Adds a force to add constant acceleration to the object </summary>
 	void AddForceZ(float z) { forces.push_back(XMFLOAT3(0.0f, 0.0f, z)); }
+
+	bool GetThrustEnabled() { return thrustEnabled; }
+	void SetThrustEnabled(bool isEnabled) { thrustEnabled = isEnabled; }
 private:
 	void Move();
 
@@ -84,4 +87,5 @@ private:
 	float gravityForce;
 
 	bool thrustEnabled;
+	float thrustForce;
 };

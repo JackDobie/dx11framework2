@@ -121,6 +121,8 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 	Geometry herculesGeometry;
 	objMeshData = OBJLoader::Load("donut.obj", _pd3dDevice);
+	herculesGeometry.centreOfMass = objMeshData.CentreOfMass;
+	Debug::Print("X: " + to_string(objMeshData.CentreOfMass.x) + ", Y: " + to_string(objMeshData.CentreOfMass.y) + ", Z: " + to_string(objMeshData.CentreOfMass.z));
 	herculesGeometry.indexBuffer = objMeshData.IndexBuffer;
 	herculesGeometry.numberOfIndices = objMeshData.IndexCount;
 	herculesGeometry.vertexBuffer = objMeshData.VertexBuffer;
@@ -165,7 +167,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 	for (int i = 0; i < NUMBER_OF_CUBES; i++)
 	{
-		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f + (i * 2.0f), 5.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 5.0f, true);
+		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f + (i * 2.0f), 5.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 2.5f, true);
 		/*gameObject->SetScale(0.5f, 0.5f, 0.5f);
 		gameObject->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
 		gameObject->GetParticleModel()->SetMass(5.0f);
@@ -709,6 +711,8 @@ void Application::Update()
 		dwTimeStart = dwTimeCur;
 	}
 
+
+	//https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 	// Move gameobject
 	if (GetAsyncKeyState('1') & 0x8000 != 0)
 	{
@@ -727,6 +731,22 @@ void Application::Update()
 	{
 		moveBackward(4);
 	}
+
+	if (GetAsyncKeyState(0x57))
+	{
+		_gameObjects[1]->GetParticleModel()->SetThrustEnabled(true);
+	}
+	else
+	{
+		if(_gameObjects[1]->GetParticleModel()->GetThrustEnabled())
+			_gameObjects[1]->GetParticleModel()->SetThrustEnabled(false);
+	}
+
+	if (GetAsyncKeyState(0x45))
+	{
+		_gameObjects[1]->AddRotation(0.0f, 1.0f, 1.0f);
+	}
+
 	// Update camera
 	float angleAroundZ = XMConvertToRadians(_cameraOrbitAngleXZ);
 

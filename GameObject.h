@@ -9,6 +9,7 @@
 #include "ParticleModel.h"
 #include "Appearance.h"
 #include "Structures.h"
+#include "Quaternion.h"
 
 using namespace DirectX;
 using namespace std;
@@ -47,7 +48,7 @@ public:
 	void SetRotation(XMFLOAT3 rotation) { transform->rotation = rotation; }
 	void SetRotation(float x, float y, float z) { transform->rotation.x = x; transform->rotation.y = y; transform->rotation.z = z; }
 	XMFLOAT3 GetRotation() const { return transform->rotation; }
-	void AddRotation(XMFLOAT3 rot);
+	void AddRotation(float x, float y, float z);
 
 	void SetScale(XMFLOAT3 scale) { transform->scale = scale; }
 	void SetScale(float x, float y, float z) { transform->scale.x = x; transform->scale.y = y; transform->scale.z = z; }
@@ -79,6 +80,9 @@ public:
 	void Update(float t);
 	void Draw(ID3D11DeviceContext * pImmediateContext);
 
+	float GetCentre() { return centreOfMass; }
+	void SetCentre(float newCentre) { centreOfMass = newCentre; }
+
 private:
 	Transform* transform;
 	ParticleModel* particleModel;
@@ -91,5 +95,7 @@ private:
 	GameObject * _parent;
 
 	float deltaTime;
+
+	float centreOfMass;
 };
 

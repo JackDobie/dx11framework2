@@ -10,10 +10,11 @@ ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT
 	useGravity = gravity;
 	netForce = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	deltaTime = _deltaTime;
-	thrustEnabled = false;
 	gravityForce = 0.5f;
 	dragFactor = 0.5f;
 	drag = XMFLOAT3(0, 0, 0);
+	thrustEnabled = false;
+	thrustForce = (objectMass * gravityForce) * 1.5f;
 }
 ParticleModel::~ParticleModel()
 {
@@ -24,7 +25,7 @@ void ParticleModel::Update(float _deltaTime)
 {
 	deltaTime = _deltaTime;
 
-	MotionInFluid();
+	//MotionInFluid();
 
 	// calculate net external force
 	UpdateNetForce();
@@ -74,7 +75,7 @@ void ParticleModel::UpdateNetForce()
 
 		if (thrustEnabled)
 		{
-			netForce.y += (objectMass * gravityForce) * 1.5f;
+			netForce.y += thrustForce;
 		}
 	}
 
@@ -108,12 +109,12 @@ void ParticleModel::Move()
 			netForce.y = 0.0f;
 			transform->position.y = 0.5f;
 		}
-		if (transform->position.y < 0.75f)
+		/*if (transform->position.y < 0.75f)
 		{
 			thrustEnabled = true;
 		}
 		else
-			thrustEnabled = false;
+			thrustEnabled = false;*/
 	}
 
 	if (velocity.x < 15 && velocity.y < 15 && velocity.z < 15)

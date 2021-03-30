@@ -196,12 +196,16 @@ MeshData OBJLoader::Load(char* filename, ID3D11Device* _pd3dDevice, bool invertT
 			//Turn data from vector form to arrays
 			SimpleVertex* finalVerts = new SimpleVertex[meshVertices.size()];
 			unsigned int numMeshVertices = meshVertices.size();
+			XMFLOAT3 posSum = XMFLOAT3(0.0f, 0.0f, 0.0f);
 			for(unsigned int i = 0; i < numMeshVertices; ++i)
 			{
 				finalVerts[i].Pos = meshVertices[i];
 				finalVerts[i].Normal = meshNormals[i];
 				finalVerts[i].TexC = meshTexCoords[i];
+
+				posSum = XMFLOAT3(posSum.x + finalVerts[i].Pos.x, posSum.y + finalVerts[i].Pos.y, posSum.z + finalVerts[i].Pos.z);
 			}
+			meshData.CentreOfMass = XMFLOAT3(posSum.x / numMeshVertices, posSum.y / numMeshVertices, posSum.z / numMeshVertices);
 
 			//Put data into vertex and index buffers, then pass the relevant data to the MeshData object.
 			//The rest of the code will hopefully look familiar to you, as it's similar to whats in your InitVertexBuffer and InitIndexBuffer methods
@@ -276,6 +280,13 @@ MeshData OBJLoader::Load(char* filename, ID3D11Device* _pd3dDevice, bool invertT
 		unsigned short* indices = new unsigned short[numIndices];
 		binaryInFile.read((char*)finalVerts, sizeof(SimpleVertex) * numVertices);
 		binaryInFile.read((char*)indices, sizeof(unsigned short) * numIndices);
+
+		XMFLOAT3 posSum = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		for (unsigned int i = 0; i < numVertices; ++i)
+		{
+			posSum = XMFLOAT3(posSum.x + finalVerts[i].Pos.x, posSum.y + finalVerts[i].Pos.y, posSum.z + finalVerts[i].Pos.z);
+		}
+		meshData.CentreOfMass = XMFLOAT3(posSum.x / numVertices, posSum.y / numVertices, posSum.z / numVertices);
 
 		//Put data into vertex and index buffers, then pass the relevant data to the MeshData object.
 		//The rest of the code will hopefully look familiar to you, as it's similar to whats in your InitVertexBuffer and InitIndexBuffer methods

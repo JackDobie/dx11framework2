@@ -3,6 +3,7 @@
 #include <DirectXMath.h>
 #include <d3d11.h>
 #include "Structures.h"
+
 using namespace DirectX;
 
 class Appearance
