@@ -1,15 +1,5 @@
 #include "GameObject.h"
 
-GameObject::GameObject(string type, Geometry geometry, Material material)
-{
-	_type = type;
-	appearance = new Appearance(geometry, material, nullptr);
-
-	_parent = nullptr;
-	transform = new Transform();
-	particleModel = new ParticleModel(transform, true, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), 1.0f, true, deltaTime);
-}
-
 GameObject::GameObject(string type, Geometry geometry, Material material, Transform* _transform, bool _useConstAccel, float mass, bool gravity)
 {
 	_type = type;

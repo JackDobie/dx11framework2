@@ -10,6 +10,7 @@
 #include "Appearance.h"
 #include "Structures.h"
 #include "Quaternion.h"
+#include "Rigidbody.h"
 
 using namespace DirectX;
 using namespace std;
@@ -35,7 +36,6 @@ using namespace std;
 class GameObject
 {
 public:
-	GameObject(string type, Geometry geometry, Material material);
 	GameObject(string type, Geometry geometry, Material material, Transform* _transform, bool _useConstAccel, float mass, bool gravity);
 	~GameObject();
 
