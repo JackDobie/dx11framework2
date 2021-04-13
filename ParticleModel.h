@@ -35,8 +35,7 @@ public:
 
 	void SetUsingConstAccel(bool _useConstAccel) { useConstAccel = _useConstAccel; }
 
-	float GetMass() { return objectMass; }
-	void SetMass(float newMass) { objectMass = newMass; }
+	float objectMass;
 
 	XMFLOAT3 GetNetForce() { return netForce; }
 	void SetNetForce(XMFLOAT3 newNetForce) { netForce = newNetForce; }
@@ -75,8 +74,6 @@ private:
 	XMFLOAT3 acceleration;
 
 	bool useConstAccel;
-
-	float objectMass;
 
 	XMFLOAT3 netForce;
 	std::vector<XMFLOAT3> forces;

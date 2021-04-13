@@ -675,8 +675,7 @@ void Application::moveForward(int objectNumber)
 {
 	if (_gameObjects.size() - 1 >= objectNumber)
 	{
-		_gameObjects[objectNumber]->GetParticleModel()->AddVelOrAcc(XMFLOAT3(1.0f, 0.0f, 0.0f));
-		//_gameObjects[objectNumber]->AddPosition(XMFLOAT3(0.0f, 0.0f, 5.0f));
+		_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(1.0f, 0.0f, 0.0f));
 	}
 }
 
@@ -684,8 +683,7 @@ void Application::moveBackward(int objectNumber)
 {
 	if (_gameObjects.size() + 2 >= objectNumber)
 	{
-		_gameObjects[objectNumber - 2]->GetParticleModel()->AddVelOrAcc(XMFLOAT3(-1.0f, 0.0f, 0.0f));
-		//_gameObjects[objectNumber - 2]->AddPosition(XMFLOAT3(0.0f, 0.0f, -5.0f));
+		_gameObjects[objectNumber - 2]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(-1.0f, 0.0f, 0.0f));
 	}
 }
 
@@ -734,12 +732,12 @@ void Application::Update()
 
 	if (GetAsyncKeyState(0x57))
 	{
-		_gameObjects[1]->GetParticleModel()->SetThrustEnabled(true);
+		_gameObjects[1]->GetRigidbody()->SetThrustEnabled(true);
 	}
 	else
 	{
-		if(_gameObjects[1]->GetParticleModel()->GetThrustEnabled())
-			_gameObjects[1]->GetParticleModel()->SetThrustEnabled(false);
+		if(_gameObjects[1]->GetRigidbody()->GetThrustEnabled())
+			_gameObjects[1]->GetRigidbody()->SetThrustEnabled(false);
 	}
 
 	if (GetAsyncKeyState(0x45))

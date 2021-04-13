@@ -71,8 +71,11 @@ public:
 	Transform* GetTransform() { return transform; }
 	void SetTransform(Transform* newTra) { transform = newTra; }
 
-	ParticleModel* GetParticleModel() { return particleModel; }
-	void SetParticleModel(ParticleModel* newParticleModel) { particleModel = newParticleModel; }
+	//ParticleModel* GetParticleModel() { return particleModel; }
+	//void SetParticleModel(ParticleModel* newParticleModel) { particleModel = newParticleModel; }
+
+	Rigidbody* GetRigidbody() { return rbd; }
+	void SetRigidbody(Rigidbody* newRbd) { rbd = newRbd; }
 
 	Appearance* GetAppearance() { return appearance; }
 	void SetAppearance(Appearance* newAppearance) { appearance = newAppearance; }
@@ -85,7 +88,8 @@ public:
 
 private:
 	Transform* transform;
-	ParticleModel* particleModel;
+	//ParticleModel* particleModel;
+	Rigidbody* rbd;
 	Appearance* appearance;
 
 	string _type;

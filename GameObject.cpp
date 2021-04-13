@@ -7,13 +7,15 @@ GameObject::GameObject(string type, Geometry geometry, Material material, Transf
 
 	_parent = nullptr;
 	transform = _transform;
-	particleModel = new ParticleModel(transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime);
+	//particleModel = new ParticleModel(transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime);
+	rbd = new Rigidbody(transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime);
 }
 
 GameObject::~GameObject()
 {
 	if (transform != nullptr) delete(transform);
-	if (particleModel != nullptr) delete(particleModel);
+	//if (particleModel != nullptr) delete(particleModel);
+	if (rbd != nullptr) delete(rbd);
 	if (appearance != nullptr) delete(appearance);
 }
 
@@ -41,7 +43,8 @@ void GameObject::Update(float t)
 		XMStoreFloat4x4(&_world, this->GetWorldMatrix() * _parent->GetWorldMatrix());
 	}
 
-	particleModel->Update(t);
+	//particleModel->Update(t);
+	rbd->Update(t);
 }
 
 void GameObject::Draw(ID3D11DeviceContext * pImmediateContext)
