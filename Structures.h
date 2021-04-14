@@ -63,9 +63,7 @@ struct MeshData
 	UINT VBOffset;
 	UINT IndexCount;
 	XMFLOAT3 CentreOfMass;
-	float XSize;
-	float YSize;
-	float ZSize;
+	XMFLOAT3 ModelDimensions;
 };
 
 struct Geometry
@@ -78,6 +76,8 @@ struct Geometry
 	UINT vertexBufferOffset;
 
 	XMFLOAT3 centreOfMass;
+
+	XMFLOAT3 modelDimensions;
 };
 
 struct Material

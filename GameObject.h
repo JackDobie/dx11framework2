@@ -47,6 +47,7 @@ public:
 
 	void SetRotation(XMFLOAT3 rotation) { transform->rotation = rotation; }
 	void SetRotation(float x, float y, float z) { transform->rotation.x = x; transform->rotation.y = y; transform->rotation.z = z; }
+	void SetRotation(XMMATRIX rotMatrix) { mRotation = rotMatrix; }
 	XMFLOAT3 GetRotation() const { return transform->rotation; }
 	void AddRotation(float x, float y, float z);
 
@@ -86,8 +87,10 @@ public:
 	float GetCentre() { return centreOfMass; }
 	void SetCentre(float newCentre) { centreOfMass = newCentre; }
 
+	XMMATRIX mRotation;
 private:
 	Transform* transform;
+
 	//ParticleModel* particleModel;
 	Rigidbody* rbd;
 	Appearance* appearance;

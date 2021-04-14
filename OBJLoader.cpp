@@ -197,8 +197,8 @@ MeshData OBJLoader::Load(char* filename, ID3D11Device* _pd3dDevice, bool invertT
 			SimpleVertex* finalVerts = new SimpleVertex[meshVertices.size()];
 			unsigned int numMeshVertices = meshVertices.size();
 			XMFLOAT3 posSum = XMFLOAT3(0.0f, 0.0f, 0.0f);
-			XMFLOAT3 maxXYZ;
-			XMFLOAT3 minXYZ;
+			XMFLOAT3 maxXYZ = finalVerts[0].Pos;
+			XMFLOAT3 minXYZ = finalVerts[0].Pos;
 			for(unsigned int i = 0; i < numMeshVertices; ++i)
 			{
 				finalVerts[i].Pos = meshVertices[i];
@@ -206,12 +206,6 @@ MeshData OBJLoader::Load(char* filename, ID3D11Device* _pd3dDevice, bool invertT
 				finalVerts[i].TexC = meshTexCoords[i];
 
 				posSum = XMFLOAT3(posSum.x + finalVerts[i].Pos.x, posSum.y + finalVerts[i].Pos.y, posSum.z + finalVerts[i].Pos.z);
-
-				if (i == 0)
-				{
-					maxXYZ = finalVerts[i].Pos;
-					minXYZ = finalVerts[i].Pos;
-				}
 
 				if (finalVerts[i].Pos.x < maxXYZ.x)
 					minXYZ.x = finalVerts[i].Pos.x;
@@ -228,9 +222,7 @@ MeshData OBJLoader::Load(char* filename, ID3D11Device* _pd3dDevice, bool invertT
 					maxXYZ.z = finalVerts[i].Pos.z;
 			}
 			meshData.CentreOfMass = XMFLOAT3(posSum.x / numMeshVertices, posSum.y / numMeshVertices, posSum.z / numMeshVertices);
-			meshData.XSize = maxXYZ.x - minXYZ.x;
-			meshData.YSize = maxXYZ.y - minXYZ.y;
-			meshData.ZSize = maxXYZ.z - minXYZ.z;
+			meshData.ModelDimensions = XMFLOAT3((maxXYZ.x - minXYZ.x), (maxXYZ.y - minXYZ.y), (maxXYZ.z - minXYZ.z));
 
 			//Put data into vertex and index buffers, then pass the relevant data to the MeshData object.
 			//The rest of the code will hopefully look familiar to you, as it's similar to whats in your InitVertexBuffer and InitIndexBuffer methods
@@ -307,11 +299,28 @@ MeshData OBJLoader::Load(char* filename, ID3D11Device* _pd3dDevice, bool invertT
 		binaryInFile.read((char*)indices, sizeof(unsigned short) * numIndices);
 
 		XMFLOAT3 posSum = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		XMFLOAT3 maxXYZ = finalVerts[0].Pos;
+		XMFLOAT3 minXYZ = finalVerts[0].Pos;
 		for (unsigned int i = 0; i < numVertices; ++i)
 		{
 			posSum = XMFLOAT3(posSum.x + finalVerts[i].Pos.x, posSum.y + finalVerts[i].Pos.y, posSum.z + finalVerts[i].Pos.z);
+
+			if (finalVerts[i].Pos.x < maxXYZ.x)
+				minXYZ.x = finalVerts[i].Pos.x;
+			if (finalVerts[i].Pos.y < maxXYZ.y)
+				minXYZ.y = finalVerts[i].Pos.y;
+			if (finalVerts[i].Pos.z < maxXYZ.z)
+				minXYZ.z = finalVerts[i].Pos.z;
+
+			if (finalVerts[i].Pos.x > maxXYZ.x)
+				maxXYZ.x = finalVerts[i].Pos.x;
+			if (finalVerts[i].Pos.y > maxXYZ.y)
+				maxXYZ.y = finalVerts[i].Pos.y;
+			if (finalVerts[i].Pos.z > maxXYZ.z)
+				maxXYZ.z = finalVerts[i].Pos.z;
 		}
 		meshData.CentreOfMass = XMFLOAT3(posSum.x / numVertices, posSum.y / numVertices, posSum.z / numVertices);
+		meshData.ModelDimensions = XMFLOAT3((maxXYZ.x - minXYZ.x), (maxXYZ.y - minXYZ.y), (maxXYZ.z - minXYZ.z));
 
 		//Put data into vertex and index buffers, then pass the relevant data to the MeshData object.
 		//The rest of the code will hopefully look familiar to you, as it's similar to whats in your InitVertexBuffer and InitIndexBuffer methods

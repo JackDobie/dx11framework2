@@ -119,24 +119,30 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	basicLight.SpecularPower = 20.0f;
 	basicLight.LightVecW = XMFLOAT3(0.0f, 1.0f, -1.0f);
 
-	Geometry herculesGeometry;
-	objMeshData = OBJLoader::Load("donut.obj", _pd3dDevice);
-	herculesGeometry.centreOfMass = objMeshData.CentreOfMass;
+	Geometry donutGeometry;
+	objMeshData = OBJLoader::Load("Models/donut.obj", _pd3dDevice);
+	donutGeometry.modelDimensions = objMeshData.ModelDimensions;
+	donutGeometry.centreOfMass = objMeshData.CentreOfMass;
 	Debug::Print("X: " + to_string(objMeshData.CentreOfMass.x) + ", Y: " + to_string(objMeshData.CentreOfMass.y) + ", Z: " + to_string(objMeshData.CentreOfMass.z));
-	herculesGeometry.indexBuffer = objMeshData.IndexBuffer;
-	herculesGeometry.numberOfIndices = objMeshData.IndexCount;
-	herculesGeometry.vertexBuffer = objMeshData.VertexBuffer;
-	herculesGeometry.vertexBufferOffset = objMeshData.VBOffset;
-	herculesGeometry.vertexBufferStride = objMeshData.VBStride;
+	donutGeometry.indexBuffer = objMeshData.IndexBuffer;
+	donutGeometry.numberOfIndices = objMeshData.IndexCount;
+	donutGeometry.vertexBuffer = objMeshData.VertexBuffer;
+	donutGeometry.vertexBufferOffset = objMeshData.VBOffset;
+	donutGeometry.vertexBufferStride = objMeshData.VBStride;
 	
 	Geometry cubeGeometry;
-	cubeGeometry.indexBuffer = _pIndexBuffer;
-	cubeGeometry.vertexBuffer = _pVertexBuffer;
-	cubeGeometry.numberOfIndices = 36;
-	cubeGeometry.vertexBufferOffset = 0;
-	cubeGeometry.vertexBufferStride = sizeof(SimpleVertex);
+	objMeshData = OBJLoader::Load("Models/cube.obj", _pd3dDevice);
+	cubeGeometry.modelDimensions = objMeshData.ModelDimensions;
+	cubeGeometry.centreOfMass = objMeshData.CentreOfMass;
+	cubeGeometry.indexBuffer = objMeshData.IndexBuffer;
+	cubeGeometry.vertexBuffer = objMeshData.VertexBuffer;
+	cubeGeometry.numberOfIndices = objMeshData.IndexCount;
+	cubeGeometry.vertexBufferOffset = objMeshData.VBOffset;
+	cubeGeometry.vertexBufferStride = objMeshData.VBStride;
 
 	Geometry planeGeometry;
+	planeGeometry.modelDimensions = XMFLOAT3(2.0f, 2.0f, 0.0f);
+	planeGeometry.centreOfMass = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	planeGeometry.indexBuffer = _pPlaneIndexBuffer;
 	planeGeometry.vertexBuffer = _pPlaneVertexBuffer;
 	planeGeometry.numberOfIndices = 6;
@@ -167,7 +173,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 	for (int i = 0; i < NUMBER_OF_CUBES; i++)
 	{
-		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f + (i * 2.0f), 5.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 2.5f, true);
+		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f + (i * 2.0f), 0.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 2.5f, true);
 		/*gameObject->SetScale(0.5f, 0.5f, 0.5f);
 		gameObject->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
 		gameObject->GetParticleModel()->SetMass(5.0f);
@@ -177,7 +183,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 		_gameObjects.push_back(gameObject);
 	}
-	gameObject = new GameObject("donut", herculesGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f, 0.5f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 5.0f, false);
+	gameObject = new GameObject("donut", donutGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f, 0.5f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 5.0f, false);
 	/*gameObject->SetScale(0.5f, 0.5f, 0.5f);
 	gameObject->SetPosition(-4.0f, 0.5f, 10.0f);*/
 	gameObject->SetTextureRV(_pTextureRV);
@@ -743,6 +749,12 @@ void Application::Update()
 	if (GetAsyncKeyState(0x45))
 	{
 		_gameObjects[1]->AddRotation(0.0f, 1.0f, 1.0f);
+	}
+
+	if (GetAsyncKeyState(0x52) & 0x8000 != 0)
+	{
+		_gameObjects[1]->GetRigidbody()->orientation = _gameObjects[1]->mRotation;
+		_gameObjects[1]->mRotation = _gameObjects[1]->GetRigidbody()->CalcOrientation(deltaTime);
 	}
 
 	// Update camera

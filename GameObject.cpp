@@ -8,7 +8,8 @@ GameObject::GameObject(string type, Geometry geometry, Material material, Transf
 	_parent = nullptr;
 	transform = _transform;
 	//particleModel = new ParticleModel(transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime);
-	rbd = new Rigidbody(transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime);
+	rbd = new Rigidbody(geometry.modelDimensions, transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime);
+	mRotation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
 }
 
 GameObject::~GameObject()
@@ -26,13 +27,18 @@ void GameObject::Update(float t)
 	// Calculate world matrix
 	XMMATRIX mScale = XMMatrixScaling(transform->scale.x, transform->scale.y, transform->scale.z);
 	
-	XMMATRIX mRotation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
-	//XMMATRIX mRotation = XMMatrixRotationX(transform->rotation.x) * XMMatrixRotationY(transform->rotation.y) * XMMatrixRotationZ(transform->rotation.z);
+	//create rotation matrix
+	//XMMATRIX mRotation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
 	XMFLOAT4 fRotation;
 	XMStoreFloat4(&fRotation, XMQuaternionRotationMatrix(mRotation));
+	//turn matrix into quaternion
 	Quaternion quatRotation = Quaternion(fRotation.w, fRotation.x, fRotation.y, fRotation.z);
 	quatRotation.normalise();
-	CalculateTransformMatrixRowMajor(mRotation, Vector3(transform->position), quatRotation);
+	//apply transformation matrix
+	CalculateTransformMatrixRowMajor(mRotation, transform->position, quatRotation);
+	//XMMATRIX mRotation = rbd->CalcOrientation(deltaTime);
+
+	//mRotation += rbd->orientation;
 
 	XMMATRIX mTranslation = XMMatrixTranslation(transform->position.x, transform->position.y, transform->position.z);
 
