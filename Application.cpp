@@ -25,11 +25,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 bool Application::HandleKeyboard(MSG msg)
 {
-	XMFLOAT3 cameraPosition = _camera->GetPosition();
+	//XMFLOAT3 cameraPosition = _camera->GetPos();
 
 	switch (msg.wParam)
 	{
-	case VK_UP:
+	/*case VK_UP:
 		_cameraOrbitRadius = max(_cameraOrbitRadiusMin, _cameraOrbitRadius - (_cameraSpeed * 0.2f));
 		return true;
 		break;
@@ -47,7 +47,7 @@ bool Application::HandleKeyboard(MSG msg)
 	case VK_LEFT:
 		_cameraOrbitAngleXZ += _cameraSpeed;
 		return true;
-		break;
+		break;*/
 	}
 
 	return false;
@@ -106,8 +106,8 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	//CreateDDSTextureFromFile(_pd3dDevice, L"Resources\\Hercules_COLOR.dds", nullptr, &_pHerculesTextureRV);
 	
     // Setup Camera
-	XMFLOAT3 eye = XMFLOAT3(0.0f, 2.0f, -1.0f);
-	XMFLOAT3 at = XMFLOAT3(0.0f, 2.0f, 0.0f);
+	XMFLOAT3 eye = XMFLOAT3(0.0f, 1.0f, -4.0f);
+	XMFLOAT3 at = XMFLOAT3(0.0f, 0.0f, 1.0f);
 	XMFLOAT3 up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
 	_camera = new Camera(eye, at, up, (float)_renderWidth, (float)_renderHeight, 0.01f, 200.0f);
@@ -736,7 +736,7 @@ void Application::Update()
 		moveBackward(4);
 	}
 
-	if (GetAsyncKeyState(0x57))
+	/*if (GetAsyncKeyState(0x57))
 	{
 		_gameObjects[1]->GetRigidbody()->SetThrustEnabled(true);
 	}
@@ -749,25 +749,57 @@ void Application::Update()
 	if (GetAsyncKeyState(0x45))
 	{
 		_gameObjects[1]->AddRotation(0.0f, 1.0f, 1.0f);
-	}
+	}*/
 
 	if (GetAsyncKeyState(0x52) & 0x8000 != 0)
 	{
-		_gameObjects[1]->GetRigidbody()->orientation = _gameObjects[1]->mRotation;
-		_gameObjects[1]->mRotation = _gameObjects[1]->GetRigidbody()->CalcOrientation(deltaTime);
+		/*_gameObjects[1]->mRotation = */_gameObjects[1]->GetRigidbody()->CalcOrientation(deltaTime);
 	}
 
-	// Update camera
-	float angleAroundZ = XMConvertToRadians(_cameraOrbitAngleXZ);
+	if (GetAsyncKeyState(0x57) & 0x8000)//if W is pressed down
+	{
+		//move cam forwards
+		_camera->Move(deltaTime);
+	}
+	else if (GetAsyncKeyState(0x53) & 0x8000)//if S is pressed down
+	{
+		//move cam backwards
+		_camera->Move(-deltaTime);
+	}
+	if (GetAsyncKeyState(0x41) & 0x8000)//if A is pressed down
+	{
+		//move cam left
+		_camera->Strafe(-deltaTime);
+	}
+	else if (GetAsyncKeyState(0x44) & 0x8000)//if D is pressed down
+	{
+		//move cam right
+		_camera->Strafe(deltaTime);
+	}
 
-	float x = _cameraOrbitRadius * cos(angleAroundZ);
-	float z = _cameraOrbitRadius * sin(angleAroundZ);
+	if (GetAsyncKeyState(VK_UP) & 0x8000) //if up arrow is pressed
+	{
+		//point cam up
+		_camera->AddAt(XMFLOAT3(0.0f, -250.0f * deltaTime, 0.0f));
+	}
 
-	XMFLOAT3 cameraPos = _camera->GetPosition();
-	cameraPos.x = x;
-	cameraPos.z = z;
+	else if (GetAsyncKeyState(VK_DOWN) & 0x8000) //if down arrow is pressed
+	{
+		//point cam down
+		_camera->AddAt(XMFLOAT3(0.0f, 250.0f * deltaTime, 0.0f));
+	}
 
-	_camera->SetPosition(cameraPos);
+	else if (GetAsyncKeyState(VK_LEFT) & 0x8000) //if left arrow is pressed
+	{
+		//point cam left
+		_camera->AddAt(XMFLOAT3(0.0f, 0.0f, -250.0f * deltaTime));
+	}
+
+	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000) //if right arrow is pressed
+	{
+		//point cam right
+		_camera->AddAt(XMFLOAT3(0.0f, 0.0f, 250.0f * deltaTime));
+	}
 	_camera->Update();
 
 	// Update objects
@@ -816,7 +848,7 @@ void Application::Draw()
 	cb.Projection = XMMatrixTranspose(projection);
 	
 	cb.light = basicLight;
-	cb.EyePosW = _camera->GetPosition();
+	cb.EyePosW = _camera->GetPos();
 
 	// Render all scene objects
 	for (auto gameObject : _gameObjects)

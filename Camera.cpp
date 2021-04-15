@@ -1,49 +1,163 @@
 #include "Camera.h"
 
-Camera::Camera(XMFLOAT3 position, XMFLOAT3 at, XMFLOAT3 up, FLOAT windowWidth, FLOAT windowHeight, FLOAT nearDepth, FLOAT farDepth)
-	: _eye(position), _at(at), _up(up), _windowWidth(windowWidth), _windowHeight(windowHeight), _nearDepth(nearDepth), _farDepth(farDepth)
+Camera::Camera(XMFLOAT3 position, XMFLOAT3 at, XMFLOAT3 up, float windowWidth, float windowHeight, float nearDepth, float farDepth)
 {
+	SetPos(position);
+	SetAt(at);
+	SetUp(up);
+	_right = XMFLOAT3(1.0f, 0.0f, 0.0f);
+	Reshape(windowWidth, windowHeight, nearDepth, farDepth);
+
+	moveSpeed = 10.0f;
+
 	Update();
 }
 
-Camera::~Camera()
+void Camera::SetPos(XMFLOAT3 newEye)
 {
+	_eye = newEye;
+}
+void Camera::SetUp(XMFLOAT3 newUp)
+{
+	_up = newUp;
+}
+void Camera::SetAt(XMFLOAT3 newAt)
+{
+	_at = newAt;
 }
 
-void Camera::Update()
+void Camera::AddAt(XMFLOAT3 addAt)
 {
-    // Initialize the view matrix
-
-	XMFLOAT4 eye = XMFLOAT4(_eye.x, _eye.y, _eye.z, 1.0f);
-	XMFLOAT4 at = XMFLOAT4(_at.x, _at.y, _at.z, 1.0f);
-	XMFLOAT4 up = XMFLOAT4(_up.x, _up.y, _up.z, 0.0f);
-
-	XMVECTOR EyeVector = XMLoadFloat4(&eye);
-	XMVECTOR AtVector = XMLoadFloat4(&at);
-	XMVECTOR UpVector = XMLoadFloat4(&up);
-
-	XMStoreFloat4x4(&_view, XMMatrixLookAtLH(EyeVector, AtVector, UpVector));
-
-    // Initialize the projection matrix
-	XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(0.25f * XM_PI, _windowWidth / _windowHeight, _nearDepth, _farDepth));
+	//add passed in float4 to current camera target
+	XMFLOAT3 added = XMFLOAT3(_at.x + addAt.x, _at.y + addAt.y, _at.z + addAt.z);
+	//get difference in xyz
+	float dx = added.x - _at.x;
+	float dy = added.y - _at.y;
+	float dz = added.z - _at.z;
+	//apply rotation to the passed in float4 and current camera target
+	XMFLOAT3 rot = XMFLOAT3(_at.x, _at.y, _at.z);
+	rot = Rotate(dx, dy, dz, rot);
+	_at = XMFLOAT3(rot.x, rot.y, rot.z);
+	//rotate right with the same rotation for strafing
+	rot = XMFLOAT3(_right.x, _right.y, _right.z);
+	rot = Rotate(dx, dy, dz, rot);
+	_right = XMFLOAT3(rot.x, rot.y, rot.z);
+}
+void Camera::Move(float deltaTime)
+{
+	XMVECTOR amount = XMVectorReplicate(moveSpeed * deltaTime);
+	XMVECTOR target = XMLoadFloat3(&_at);
+	XMVECTOR pos = XMLoadFloat3(&_eye);
+	//multiply forward vector by speed, and add to position
+	XMFLOAT4 out;
+	XMStoreFloat4(&out, XMVectorMultiplyAdd(amount, target, pos));
+	//update position with new x and z
+	_eye = XMFLOAT3(out.x, _eye.y, out.z);
+}
+void Camera::Strafe(float deltaTime)
+{
+	XMVECTOR amount = XMVectorReplicate(moveSpeed * deltaTime);
+	XMVECTOR right = XMLoadFloat3(&_right);
+	XMVECTOR pos = XMLoadFloat3(&_eye);
+	//multiply right facing vector by speed, and add to position
+	XMFLOAT4 out;
+	XMStoreFloat4(&out, XMVectorMultiplyAdd(amount, right, pos));
+	//update position with new x and z
+	_eye = XMFLOAT3(out.x, _eye.y, out.z);
 }
 
-void Camera::Reshape(FLOAT windowWidth, FLOAT windowHeight, FLOAT nearDepth, FLOAT farDepth)
+XMFLOAT3 Camera::Rotate(float dx, float dy, float dz, XMFLOAT3 original)
+{
+	dx = XMConvertToRadians(dx);
+	dy = XMConvertToRadians(dy);
+	dz = XMConvertToRadians(dz);
+
+	//if facing away from 0,0,0, invert y movement. without this, y movement is inverted making you look up when pressing down.
+	float angle = GetAngle(XMFLOAT3(_at.x, _at.y, _at.z), XMFLOAT3(0.0f, 0.0f, 0.0f));
+	if (angle > 90.0f && angle < 270)
+	{
+		dy = -dy;
+	}
+
+	//create rotation matrix
+	XMMATRIX r = XMMatrixRotationRollPitchYaw(dy, dz, dx);
+	//create transform float3 with rotation matrix
+	XMFLOAT3 out = original;
+	XMStoreFloat3(&out, XMVector3TransformNormal(XMLoadFloat3(&out), r));
+	return out;
+}
+
+void Camera::LookAt(XMFLOAT3 pos)
+{
+	_at = XMFLOAT3(pos.x - _eye.x, pos.y - _eye.y, pos.z - _eye.z);
+}
+
+XMFLOAT3 Camera::GetPos()
+{
+	return _eye;
+}
+XMFLOAT3 Camera::GetAt()
+{
+	return _at;
+}
+XMFLOAT3 Camera::GetUp()
+{
+	return _up;
+}
+XMFLOAT3 Camera::GetRight()
+{
+	return _right;
+}
+
+XMFLOAT4X4 Camera::GetView()
+{
+	return _view;
+}
+XMFLOAT4X4 Camera::GetProjection()
+{
+	return _projection;
+}
+
+float Camera::GetAngle(XMFLOAT3 pos1, XMFLOAT3 pos2)
+{
+	//get angle between pos1 and pos2 from 0 to 360
+	float n = 270 - atan2(pos2.z - pos1.z, pos2.x - pos1.x) * 180 / XM_PI;
+	float angle = fmod(n, 360);
+
+	return angle;
+}
+
+void Camera::Reshape(float windowWidth, float windowHeight, float nearDepth, float farDepth)
 {
 	_windowWidth = windowWidth;
 	_windowHeight = windowHeight;
 	_nearDepth = nearDepth;
 	_farDepth = farDepth;
+	XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, windowWidth / (float)windowHeight, 0.01f, 100.0f));
 }
 
-XMFLOAT4X4 Camera::GetViewProjection() const 
-{ 
-	XMMATRIX view = XMLoadFloat4x4(&_view);
-	XMMATRIX projection = XMLoadFloat4x4(&_projection);
+void Camera::Reshape(float windowWidth, float windowHeight)
+{
+	_windowWidth = windowWidth;
+	_windowHeight = windowHeight;
+	XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, windowWidth / (float)windowHeight, 0.01f, 100.0f));
+}
 
-	XMFLOAT4X4 viewProj;
+void Camera::Update()
+{
+	//convert eye, at, and up to xmvector from xmfloat3
+	XMVECTOR eyeVec = XMLoadFloat3(&_eye);
+	XMVECTOR atVec = XMLoadFloat3(&_at);
+	XMVECTOR upVec = XMLoadFloat3(&_up);
+	XMStoreFloat4x4(&_view, XMMatrixLookToLH(eyeVec, atVec, upVec));
+}
 
-	XMStoreFloat4x4(&viewProj, view * projection);
+void Camera::SetMoveSpeed(float newSpeed)
+{
+	moveSpeed = newSpeed;
+}
 
-	return viewProj;
+float Camera::GetMoveSpeed()
+{
+	return moveSpeed;
 }

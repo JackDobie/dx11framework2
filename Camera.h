@@ -1,8 +1,5 @@
 #pragma once
 
-#include <windows.h>
-#include <d3d11_1.h>
-#include <d3dcompiler.h>
 #include <directxmath.h>
 
 using namespace DirectX;
@@ -10,37 +7,55 @@ using namespace DirectX;
 class Camera
 {
 private:
-	XMFLOAT3 _eye; 
+	// private attributes to store camera position and view volume
+
+	XMFLOAT3 _eye;
 	XMFLOAT3 _at;
 	XMFLOAT3 _up;
+	XMFLOAT3 _right;
 
-	FLOAT _windowWidth;
-	FLOAT _windowHeight;
-	FLOAT _nearDepth;
-	FLOAT _farDepth;
+	float _windowWidth;
+	float _windowHeight;
+	float _nearDepth;
+	float _farDepth;
 
+	// attributes to hold the view and projection matrices to be passed to the shader
 	XMFLOAT4X4 _view;
 	XMFLOAT4X4 _projection;
 
+	float moveSpeed;
+
 public:
-	Camera(XMFLOAT3 position, XMFLOAT3 at, XMFLOAT3 up, FLOAT windowWidth, FLOAT windowHeight, FLOAT nearDepth, FLOAT farDepth);
-	~Camera();
+	Camera(XMFLOAT3 position, XMFLOAT3 at, XMFLOAT3 up, float windowWidth, float windowHeight, float nearDepth, float farDepth);
 
 	void Update();
 
-	XMFLOAT4X4 GetView() const { return _view; }
-	XMFLOAT4X4 GetProjection() const { return _projection; }
+	// functions to set values
+	void SetPos(XMFLOAT3 newEye);
+	void SetAt(XMFLOAT3 newAt);
+	void SetUp(XMFLOAT3 newUp);
+	void SetMoveSpeed(float newSpeed);
 
-	XMFLOAT4X4 GetViewProjection() const;
+	void AddAt(XMFLOAT3 addAt);
 
-	XMFLOAT3 GetPosition() const { return _eye; }
-	XMFLOAT3 GetLookAt() const { return _at; }
-	XMFLOAT3 GetUp() const { return _up; }
+	void LookAt(XMFLOAT3 pos);
+	XMFLOAT3 Rotate(float dx, float dy, float dz, XMFLOAT3 original);
 
-	void SetPosition(XMFLOAT3 position) { _eye = position; }
-	void SetLookAt(XMFLOAT3 lookAt) { _at = lookAt; }
-	void SetUp(XMFLOAT3 up) { _up = up; }
+	void Move(float deltaTime);
+	void Strafe(float deltaTime);
 
-	void Reshape(FLOAT windowWidth, FLOAT windowHeight, FLOAT nearDepth, FLOAT farDepth);
+	// functions to return values
+	XMFLOAT3 GetPos();
+	XMFLOAT3 GetAt();
+	XMFLOAT3 GetRight();
+	XMFLOAT3 GetUp();
+	float GetAngle(XMFLOAT3 pos1, XMFLOAT3 pos2);
+	float GetMoveSpeed();
+
+	XMFLOAT4X4 GetView();
+	XMFLOAT4X4 GetProjection();
+
+	// function to reshape the camera volume if the window is resized
+	void Reshape(float windowWidth, float windowHeight, float nearDepth, float farDepth);
+	void Reshape(float windowWidth, float windowHeight);
 };
-

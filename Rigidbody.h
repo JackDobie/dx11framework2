@@ -45,7 +45,7 @@ public:
 	Quaternion qOrientation = Quaternion();
 	XMMATRIX orientation;
 private:
-	float angularDamp = 0.99f;
+	float angularDamp = 0.1f;
 	XMFLOAT3X3 inertiaTensor;
 
 	XMVECTOR angularAcceleration;
