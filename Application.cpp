@@ -130,7 +130,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	planeGeometry.vertexBufferOffset = 0;
 	planeGeometry.vertexBufferStride = sizeof(SimpleVertex);
 
-	Geometry terrainPlaneGeometry;
+	/*Geometry terrainPlaneGeometry;
 	planeGeometry.modelDimensions = XMFLOAT3(10.0f, 0.0f, 10.0f);
 	planeGeometry.centreOfMass = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	terrainPlaneGeometry.vertexBuffer = _pTerrainPlaneVertexBuffer;
@@ -138,7 +138,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	terrainPlaneGeometry.vertexBufferOffset = 0;
 	terrainPlaneGeometry.vertexBufferStride = sizeof(SimpleVertex);
 	Terrain* terrain = new Terrain(_pd3dDevice, &terrainPlaneGeometry);
-	terrain->MakePlane(10, 10, 10, 10);
+	terrain->MakePlane(10, 10, 10, 10);*/
 
 	Material shinyMaterial;
 	shinyMaterial.ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
@@ -154,14 +154,14 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 
 	
-	//GameObject* gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, new Transform(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(XMConvertToRadians(90.0f), 0.0f, 0.0f), XMFLOAT3(15.0f, 15.0f, 15.0f)), true, 1.0f, false);
-	///*gameObject->SetPosition(0.0f, 0.0f, 0.0f);
-	//gameObject->SetScale(15.0f, 15.0f, 15.0f);
-	//gameObject->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);*/
-	//gameObject->SetTextureRV(_pGroundTextureRV);
-
-	GameObject* gameObject = new GameObject("Terrain", terrainPlaneGeometry, noSpecMaterial, new Transform(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(XMConvertToRadians(90.0f), 0.0f, 0.0f), XMFLOAT3(15.0f, 15.0f, 15.0f)), true, 1.0f, false);
+	GameObject* gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, new Transform(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(XMConvertToRadians(90.0f), 0.0f, 0.0f), XMFLOAT3(15.0f, 15.0f, 15.0f)), true, 1.0f, false);
+	/*gameObject->SetPosition(0.0f, 0.0f, 0.0f);
+	gameObject->SetScale(15.0f, 15.0f, 15.0f);
+	gameObject->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);*/
 	gameObject->SetTextureRV(_pGroundTextureRV);
+
+	/*GameObject* gameObject = new GameObject("Terrain", terrainPlaneGeometry, noSpecMaterial, new Transform(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(XMConvertToRadians(90.0f), 0.0f, 0.0f), XMFLOAT3(15.0f, 15.0f, 15.0f)), true, 1.0f, false);
+	gameObject->SetTextureRV(_pGroundTextureRV);*/
 
 	_gameObjects.push_back(gameObject);
 
