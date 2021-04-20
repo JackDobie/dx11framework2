@@ -10,10 +10,7 @@ GameObject::GameObject(string type, Geometry geometry, Material material, Transf
 	//particleModel = new ParticleModel(transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime);
 	rbd = new Rigidbody(geometry.modelDimensions, transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime);
 	mRotation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
-	if (_type.find("Cube") != string::npos)
-	{
-		rbd->orientation = mRotation;
-	}
+	rbd->orientation = mRotation;
 }
 
 GameObject::~GameObject()
@@ -32,7 +29,7 @@ void GameObject::Update(float t)
 	XMMATRIX mScale = XMMatrixScaling(transform->scale.x, transform->scale.y, transform->scale.z);
 	
 	//create rotation matrix
-	//XMMATRIX mRotation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
+	mRotation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
 	XMFLOAT4 fRotation;
 	XMStoreFloat4(&fRotation, XMQuaternionRotationMatrix(mRotation));
 	//turn matrix into quaternion
@@ -40,12 +37,11 @@ void GameObject::Update(float t)
 	quatRotation.normalise();
 	//apply transformation matrix
 	CalculateTransformMatrixRowMajor(mRotation, transform->position, quatRotation);
-	//XMMATRIX mRotation = rbd->CalcOrientation(deltaTime);
 
+	//rbd->orientation = mRotation;
 	if (_type.find("Cube") != string::npos)
 	{
 		mRotation = rbd->orientation;
-		//mRotation = rbd->CalcOrientation(deltaTime);
 	}
 
 	XMMATRIX mTranslation = XMMatrixTranslation(transform->position.x, transform->position.y, transform->position.z);
@@ -79,4 +75,5 @@ void GameObject::AddPosition(XMFLOAT3 pos)
 void GameObject::AddRotation(float x, float y, float z)
 {
 	transform->rotation = XMFLOAT3(transform->rotation.x + (x * deltaTime), transform->rotation.y + (y * deltaTime), transform->rotation.z + (z * deltaTime));
+	rbd->orientation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
 }

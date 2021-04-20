@@ -9,7 +9,7 @@ using namespace DirectX;
 class Rigidbody : public ParticleModel
 {
 public:
-	Rigidbody(XMFLOAT3 modelDimensions, Transform* _transform, bool _useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float _deltaTime) : ParticleModel(_transform, _useConstAccel, initialVelocty, initialAcceleration, mass, gravity, _deltaTime)
+	Rigidbody(XMFLOAT3 modelDimensions, Transform* transform, bool useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float deltaTime) : ParticleModel(transform, useConstAccel, initialVelocty, initialAcceleration, mass, gravity, deltaTime)
 	{
 		inertiaTensor._11 = 0.08333333333 * objectMass * ((modelDimensions.y * modelDimensions.y) + (modelDimensions.z * modelDimensions.z));
 		inertiaTensor._12 = 0;
@@ -27,7 +27,8 @@ public:
 
 		angularAcceleration = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 		angularVelocity = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-		orientation = XMMatrixSet(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+		orientation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
+		qOrientation = Quaternion();
 	}
 
 	XMVECTOR Torque(XMVECTOR point, XMVECTOR force) { return XMVector3Cross(point, force); }
@@ -42,10 +43,10 @@ public:
 	void DampAngularVelocity(float deltaTime);
 
 	XMMATRIX CalcOrientation(float deltaTime);
-	Quaternion qOrientation = Quaternion();
+	Quaternion qOrientation;
 	XMMATRIX orientation;
 private:
-	float angularDamp = 0.1f;
+	float angularDamp = 0.9f;
 	XMFLOAT3X3 inertiaTensor;
 
 	XMVECTOR angularAcceleration;

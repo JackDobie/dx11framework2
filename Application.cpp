@@ -25,29 +25,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 bool Application::HandleKeyboard(MSG msg)
 {
-	//XMFLOAT3 cameraPosition = _camera->GetPos();
-
 	switch (msg.wParam)
 	{
-	/*case VK_UP:
-		_cameraOrbitRadius = max(_cameraOrbitRadiusMin, _cameraOrbitRadius - (_cameraSpeed * 0.2f));
-		return true;
+	default:
 		break;
-
-	case VK_DOWN:
-		_cameraOrbitRadius = min(_cameraOrbitRadiusMax, _cameraOrbitRadius + (_cameraSpeed * 0.2f));
-		return true;
-		break;
-
-	case VK_RIGHT:
-		_cameraOrbitAngleXZ -= _cameraSpeed;
-		return true;
-		break;
-
-	case VK_LEFT:
-		_cameraOrbitAngleXZ += _cameraSpeed;
-		return true;
-		break;*/
 	}
 
 	return false;
@@ -66,8 +47,8 @@ Application::Application()
 	_pVertexShader = nullptr;
 	_pPixelShader = nullptr;
 	_pVertexLayout = nullptr;
-	_pVertexBuffer = nullptr;
-	_pIndexBuffer = nullptr;
+	_pTerrainPlaneVertexBuffer = nullptr;
+	_pTerrainPlaneIndexBuffer = nullptr;
 	_pConstantBuffer = nullptr;
 	CCWcullMode=nullptr;
 	CWcullMode= nullptr;
@@ -149,6 +130,14 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	planeGeometry.vertexBufferOffset = 0;
 	planeGeometry.vertexBufferStride = sizeof(SimpleVertex);
 
+	Geometry terrainPlaneGeometry;
+	terrainPlaneGeometry.vertexBuffer = _pTerrainPlaneVertexBuffer;
+	terrainPlaneGeometry.indexBuffer = _pTerrainPlaneIndexBuffer;
+	terrainPlaneGeometry.vertexBufferOffset = 0;
+	terrainPlaneGeometry.vertexBufferStride = sizeof(SimpleVertex);
+	Terrain* terrain = new Terrain(_pd3dDevice, &terrainPlaneGeometry);
+	terrain->MakePlane(10, 10, 10, 10);
+
 	Material shinyMaterial;
 	shinyMaterial.ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
 	shinyMaterial.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -163,10 +152,13 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 
 	
-	GameObject* gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, new Transform(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(XMConvertToRadians(90.0f), 0.0f, 0.0f), XMFLOAT3(15.0f, 15.0f, 15.0f)), true, 1.0f, false);
-	/*gameObject->SetPosition(0.0f, 0.0f, 0.0f);
-	gameObject->SetScale(15.0f, 15.0f, 15.0f);
-	gameObject->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);*/
+	//GameObject* gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, new Transform(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(XMConvertToRadians(90.0f), 0.0f, 0.0f), XMFLOAT3(15.0f, 15.0f, 15.0f)), true, 1.0f, false);
+	///*gameObject->SetPosition(0.0f, 0.0f, 0.0f);
+	//gameObject->SetScale(15.0f, 15.0f, 15.0f);
+	//gameObject->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);*/
+	//gameObject->SetTextureRV(_pGroundTextureRV);
+
+	GameObject* gameObject = new GameObject("Terrain", terrainPlaneGeometry, noSpecMaterial, new Transform(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(XMConvertToRadians(90.0f), 0.0f, 0.0f), XMFLOAT3(15.0f, 15.0f, 15.0f)), true, 1.0f, false);
 	gameObject->SetTextureRV(_pGroundTextureRV);
 
 	_gameObjects.push_back(gameObject);
@@ -189,6 +181,8 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	gameObject->SetTextureRV(_pTextureRV);
 
 	_gameObjects.push_back(gameObject);
+
+	//CreateGrid(5, 5, 10, 10);
 
 	return S_OK;
 }
@@ -273,57 +267,7 @@ HRESULT Application::InitShadersAndInputLayout()
 HRESULT Application::InitVertexBuffer()
 {
 	HRESULT hr;
-
-    // Create vertex buffer
-    SimpleVertex vertices[] =
-    {
-		{ XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f) },
-		{ XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
-
-		{ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f) },
-		{ XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
-
-		{ XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f) },
-
-		{ XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f) },
-		{ XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f) },
-
-		{ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f) },
-
-		{ XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f) },
-		{ XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f) },
-    };
-
-    D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-    bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof(SimpleVertex) * 24;
-    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-
-    D3D11_SUBRESOURCE_DATA InitData;
-	ZeroMemory(&InitData, sizeof(InitData));
-    InitData.pSysMem = vertices;
-
-    hr = _pd3dDevice->CreateBuffer(&bd, &InitData, &_pVertexBuffer);
-
-    if (FAILED(hr))
-        return hr;
-
+	
 	// Create vertex buffer
 	SimpleVertex planeVertices[] =
 	{
@@ -333,12 +277,14 @@ HRESULT Application::InitVertexBuffer()
 		{ XMFLOAT3(-1.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(0.0f, 0.0f) },
 	};
 
+	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.ByteWidth = sizeof(SimpleVertex) * 4;
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 
+	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = planeVertices;
 
@@ -354,44 +300,6 @@ HRESULT Application::InitIndexBuffer()
 {
 	HRESULT hr;
 
-    // Create index buffer
-    WORD indices[] =
-    {
-		3, 1, 0,
-		2, 1, 3,
-
-		6, 4, 5,
-		7, 4, 6,
-
-		11, 9, 8,
-		10, 9, 11,
-
-		14, 12, 13,
-		15, 12, 14,
-
-		19, 17, 16,
-		18, 17, 19,
-
-		22, 20, 21,
-		23, 20, 22
-    };
-
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-
-    bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof(WORD) * 36;     
-    bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA InitData;
-	ZeroMemory(&InitData, sizeof(InitData));
-    InitData.pSysMem = indices;
-    hr = _pd3dDevice->CreateBuffer(&bd, &InitData, &_pIndexBuffer);
-
-    if (FAILED(hr))
-        return hr;
-
 	// Create plane index buffer
 	WORD planeIndices[] =
 	{
@@ -399,12 +307,14 @@ HRESULT Application::InitIndexBuffer()
 		3, 2, 1,
 	};
 
+	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.ByteWidth = sizeof(WORD) * 6;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 
+	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = planeIndices;
 	hr = _pd3dDevice->CreateBuffer(&bd, &InitData, &_pPlaneIndexBuffer);
@@ -640,8 +550,8 @@ void Application::Cleanup()
 
     if (_pConstantBuffer) _pConstantBuffer->Release();
 
-    if (_pVertexBuffer) _pVertexBuffer->Release();
-    if (_pIndexBuffer) _pIndexBuffer->Release();
+    if (_pTerrainPlaneVertexBuffer) _pTerrainPlaneVertexBuffer->Release();
+    if (_pTerrainPlaneIndexBuffer) _pTerrainPlaneIndexBuffer->Release();
 	if (_pPlaneVertexBuffer) _pPlaneVertexBuffer->Release();
 	if (_pPlaneIndexBuffer) _pPlaneIndexBuffer->Release();
 
@@ -744,16 +654,16 @@ void Application::Update()
 	{
 		if(_gameObjects[1]->GetRigidbody()->GetThrustEnabled())
 			_gameObjects[1]->GetRigidbody()->SetThrustEnabled(false);
-	}
+	}*/
 
 	if (GetAsyncKeyState(0x45))
 	{
 		_gameObjects[1]->AddRotation(0.0f, 1.0f, 1.0f);
-	}*/
+	}
 
 	if (GetAsyncKeyState(0x52) & 0x8000 != 0)
 	{
-		/*_gameObjects[1]->mRotation = */_gameObjects[1]->GetRigidbody()->CalcOrientation(deltaTime);
+		_gameObjects[1]->mRotation = _gameObjects[1]->GetRigidbody()->CalcOrientation(deltaTime);
 	}
 
 	if (GetAsyncKeyState(0x57) & 0x8000)//if W is pressed down
@@ -780,25 +690,25 @@ void Application::Update()
 	if (GetAsyncKeyState(VK_UP) & 0x8000) //if up arrow is pressed
 	{
 		//point cam up
-		_camera->AddAt(XMFLOAT3(0.0f, -250.0f * deltaTime, 0.0f));
+		_camera->AddAt(XMFLOAT3(0.0f, -150.0f * deltaTime, 0.0f));
 	}
 
 	else if (GetAsyncKeyState(VK_DOWN) & 0x8000) //if down arrow is pressed
 	{
 		//point cam down
-		_camera->AddAt(XMFLOAT3(0.0f, 250.0f * deltaTime, 0.0f));
+		_camera->AddAt(XMFLOAT3(0.0f, 150.0f * deltaTime, 0.0f));
 	}
 
 	else if (GetAsyncKeyState(VK_LEFT) & 0x8000) //if left arrow is pressed
 	{
 		//point cam left
-		_camera->AddAt(XMFLOAT3(0.0f, 0.0f, -250.0f * deltaTime));
+		_camera->AddAt(XMFLOAT3(0.0f, 0.0f, -150.0f * deltaTime));
 	}
 
 	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000) //if right arrow is pressed
 	{
 		//point cam right
-		_camera->AddAt(XMFLOAT3(0.0f, 0.0f, 250.0f * deltaTime));
+		_camera->AddAt(XMFLOAT3(0.0f, 0.0f, 150.0f * deltaTime));
 	}
 	_camera->Update();
 
@@ -888,3 +798,75 @@ void Application::Draw()
     //
     _pSwapChain->Present(0, 0);
 }
+
+//MeshData Application::CreateGrid(UINT rows, UINT columns, UINT width, UINT depth)
+//{
+//	UINT vertexCount = rows * columns;
+//
+//	vector<SimpleVertex> verts;
+//	vector<WORD> indices;
+//
+//	verts.resize(vertexCount);
+//
+//	// calculates distance between each row and column
+//	float dx = width / (columns - 1);
+//	float dz = depth / (rows - 1);
+//
+//	float x = 0;
+//	float y = 0;
+//	float z = 0;
+//	for (UINT i = 0; i < rows; i++)
+//	{
+//		for (UINT j = 0; j < columns; j++)
+//		{
+//			SimpleVertex vertex;
+//			vertex.Pos = XMFLOAT3(x, y, z);
+//			vertex.Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+//			vertex.TexC.x = j * (columns - 1);
+//			vertex.TexC.y = i * (rows - 1);
+//
+//			verts[i * columns + j] = vertex;
+//
+//			x += dx;
+//		}
+//		z += dz;
+//	}
+//
+//	
+//
+//	//auto verts = new XMFLOAT3[rows * columns];
+//	////vector<XMFLOAT3> verts;
+//	//float x = 0;
+//	//float z = 0;
+//	//for (int i = 0; i <= rows; i++)
+//	//{
+//	//	for (int j = 0; j <= columns; j++)
+//	//	{
+//	//		verts[i * columns + j] = XMFLOAT3(x, 0, z);
+//	//		//verts.push_back(XMFLOAT3(x, 0, z));
+//	//		x += width / (columns - 1);
+//	//	}
+//	//	x = 0;
+//	//	z += depth / (rows - 1);
+//	//}
+//
+//	//vector<XMFLOAT3> indices;
+//	//XMFLOAT3 abc;
+//	//XMFLOAT3 cbd;
+//	//for (int i = 0; i <= rows; i++)
+//	//{
+//	//	for (int j = 0; j <= columns; j++)
+//	//	{
+//	//		//verts[i * columns + j]
+//	//		//abc = (i * n + j, i * n + j + 1, (i + 1) * n + j)
+//	//		//cbd = ((i + 1) * n + j, i * n + j + 1, (i + 1) * n + j + 1)
+//	//		abc = XMFLOAT3(i * columns + j, i * columns + j + 1, (i + 1) * columns + j);
+//	//		cbd = XMFLOAT3((i + 1) * columns + j, i * columns + j + 1, (i + 1) * columns + j + 1);
+//	//		//indices.push_back(abc);
+//	//		//indices.push_back(cbd);
+//	//	}
+//
+//	//}
+//
+//	return MeshData();
+//}

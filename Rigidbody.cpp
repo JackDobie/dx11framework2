@@ -24,7 +24,7 @@ XMMATRIX Rigidbody::CalcOrientation(float deltaTime)
 {
 	CalcAngularAcceleration();
 	CalcAngularVelocity(deltaTime);
-	//DampAngularVelocity(deltaTime);
+	DampAngularVelocity(deltaTime);
 
 	XMFLOAT3 angVelV3;
 	XMStoreFloat3(&angVelV3, angularVelocity);

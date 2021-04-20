@@ -11,6 +11,7 @@
 #include "Structures.h"
 #include "OBJLoader.h"
 #include "Quaternion.h"
+#include "Terrain.h"
 
 #include <vector>
 /*
@@ -37,7 +38,7 @@ using namespace DirectX;
 //	XMFLOAT2 Tex;
 //};
 
-#define NUMBER_OF_CUBES 1
+#define NUMBER_OF_CUBES 2
 #define FPS_60 1.0f/60.0f
 
 struct SurfaceInfo
@@ -86,11 +87,14 @@ private:
 	ID3D11PixelShader*      _pPixelShader;
 	ID3D11InputLayout*      _pVertexLayout;
 
-	ID3D11Buffer*           _pVertexBuffer;
-	ID3D11Buffer*           _pIndexBuffer;
+	//ID3D11Buffer*           _pVertexBuffer;
+	//ID3D11Buffer*           _pIndexBuffer;
 
 	ID3D11Buffer*           _pPlaneVertexBuffer;
 	ID3D11Buffer*           _pPlaneIndexBuffer;
+
+	ID3D11Buffer*			_pTerrainPlaneVertexBuffer;
+	ID3D11Buffer*			_pTerrainPlaneIndexBuffer;
 
 	ID3D11Buffer*           _pConstantBuffer;
 
