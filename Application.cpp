@@ -131,6 +131,8 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	planeGeometry.vertexBufferStride = sizeof(SimpleVertex);
 
 	Geometry terrainPlaneGeometry;
+	planeGeometry.modelDimensions = XMFLOAT3(10.0f, 0.0f, 10.0f);
+	planeGeometry.centreOfMass = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	terrainPlaneGeometry.vertexBuffer = _pTerrainPlaneVertexBuffer;
 	terrainPlaneGeometry.indexBuffer = _pTerrainPlaneIndexBuffer;
 	terrainPlaneGeometry.vertexBufferOffset = 0;
