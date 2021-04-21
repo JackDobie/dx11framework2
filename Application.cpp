@@ -138,7 +138,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	terrainPlaneGeometry.vertexBufferOffset = 0;
 	terrainPlaneGeometry.vertexBufferStride = sizeof(SimpleVertex);
 	Terrain* terrain = new Terrain(_pd3dDevice, &terrainPlaneGeometry);
-	terrain->MakePlane(5, 5, 10, 10);
+	terrain->MakePlane(10, 10, 25, 25);
 
 	Material shinyMaterial;
 	shinyMaterial.ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
@@ -160,7 +160,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	//gameObject->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);*/
 	//gameObject->SetTextureRV(_pGroundTextureRV);
 
-	GameObject* gameObject = new GameObject("Terrain", terrainPlaneGeometry, noSpecMaterial, new Transform(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(XMConvertToRadians(90.0f), 0.0f, 0.0f), XMFLOAT3(15.0f, 15.0f, 15.0f)), true, 1.0f, false);
+	GameObject* gameObject = new GameObject("Terrain", terrainPlaneGeometry, noSpecMaterial, new Transform(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f)), true, 1.0f, false);
 	gameObject->SetTextureRV(_pGroundTextureRV);
 
 	_gameObjects.push_back(gameObject);
