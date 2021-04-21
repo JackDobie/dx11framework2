@@ -121,24 +121,24 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	cubeGeometry.vertexBufferOffset = objMeshData.VBOffset;
 	cubeGeometry.vertexBufferStride = objMeshData.VBStride;
 
-	Geometry planeGeometry;
+	/*Geometry planeGeometry;
 	planeGeometry.modelDimensions = XMFLOAT3(2.0f, 2.0f, 0.0f);
 	planeGeometry.centreOfMass = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	planeGeometry.indexBuffer = _pPlaneIndexBuffer;
 	planeGeometry.vertexBuffer = _pPlaneVertexBuffer;
 	planeGeometry.numberOfIndices = 6;
 	planeGeometry.vertexBufferOffset = 0;
-	planeGeometry.vertexBufferStride = sizeof(SimpleVertex);
+	planeGeometry.vertexBufferStride = sizeof(SimpleVertex);*/
 
 	Geometry terrainPlaneGeometry;
-	planeGeometry.modelDimensions = XMFLOAT3(10.0f, 0.0f, 10.0f);
-	planeGeometry.centreOfMass = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	terrainPlaneGeometry.modelDimensions = XMFLOAT3(10.0f, 0.0f, 10.0f);
+	terrainPlaneGeometry.centreOfMass = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	terrainPlaneGeometry.vertexBuffer = _pTerrainPlaneVertexBuffer;
 	terrainPlaneGeometry.indexBuffer = _pTerrainPlaneIndexBuffer;
 	terrainPlaneGeometry.vertexBufferOffset = 0;
 	terrainPlaneGeometry.vertexBufferStride = sizeof(SimpleVertex);
 	Terrain* terrain = new Terrain(_pd3dDevice, &terrainPlaneGeometry);
-	terrain->MakePlane(10, 10, 10, 10);
+	terrain->MakePlane(5, 5, 10, 10);
 
 	Material shinyMaterial;
 	shinyMaterial.ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
@@ -800,75 +800,3 @@ void Application::Draw()
     //
     _pSwapChain->Present(0, 0);
 }
-
-//MeshData Application::CreateGrid(UINT rows, UINT columns, UINT width, UINT depth)
-//{
-//	UINT vertexCount = rows * columns;
-//
-//	vector<SimpleVertex> verts;
-//	vector<WORD> indices;
-//
-//	verts.resize(vertexCount);
-//
-//	// calculates distance between each row and column
-//	float dx = width / (columns - 1);
-//	float dz = depth / (rows - 1);
-//
-//	float x = 0;
-//	float y = 0;
-//	float z = 0;
-//	for (UINT i = 0; i < rows; i++)
-//	{
-//		for (UINT j = 0; j < columns; j++)
-//		{
-//			SimpleVertex vertex;
-//			vertex.Pos = XMFLOAT3(x, y, z);
-//			vertex.Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
-//			vertex.TexC.x = j * (columns - 1);
-//			vertex.TexC.y = i * (rows - 1);
-//
-//			verts[i * columns + j] = vertex;
-//
-//			x += dx;
-//		}
-//		z += dz;
-//	}
-//
-//	
-//
-//	//auto verts = new XMFLOAT3[rows * columns];
-//	////vector<XMFLOAT3> verts;
-//	//float x = 0;
-//	//float z = 0;
-//	//for (int i = 0; i <= rows; i++)
-//	//{
-//	//	for (int j = 0; j <= columns; j++)
-//	//	{
-//	//		verts[i * columns + j] = XMFLOAT3(x, 0, z);
-//	//		//verts.push_back(XMFLOAT3(x, 0, z));
-//	//		x += width / (columns - 1);
-//	//	}
-//	//	x = 0;
-//	//	z += depth / (rows - 1);
-//	//}
-//
-//	//vector<XMFLOAT3> indices;
-//	//XMFLOAT3 abc;
-//	//XMFLOAT3 cbd;
-//	//for (int i = 0; i <= rows; i++)
-//	//{
-//	//	for (int j = 0; j <= columns; j++)
-//	//	{
-//	//		//verts[i * columns + j]
-//	//		//abc = (i * n + j, i * n + j + 1, (i + 1) * n + j)
-//	//		//cbd = ((i + 1) * n + j, i * n + j + 1, (i + 1) * n + j + 1)
-//	//		abc = XMFLOAT3(i * columns + j, i * columns + j + 1, (i + 1) * columns + j);
-//	//		cbd = XMFLOAT3((i + 1) * columns + j, i * columns + j + 1, (i + 1) * columns + j + 1);
-//	//		//indices.push_back(abc);
-//	//		//indices.push_back(cbd);
-//	//	}
-//
-//	//}
-//
-//	return MeshData();
-//}

@@ -11,7 +11,7 @@ Terrain::Terrain(ID3D11Device* d3dDevice, Geometry* _geometry)
 void Terrain::MakePlane(UINT rows, UINT columns, UINT width, UINT depth)
 {
 	UINT vertexCount = rows * columns;
-	UINT indexCount = (rows) * (columns) * 2;
+	UINT indexCount = (rows - 1) * (columns - 1) * 2;
 	geometry->numberOfIndices = indexCount;
 
 	vector<SimpleVertex> verts;
@@ -70,9 +70,9 @@ void Terrain::MakePlane(UINT rows, UINT columns, UINT width, UINT depth)
 
 	// make tris from quads
 	UINT k = 0;
-	for (UINT i = 0; i < rows; i++)
+	for (UINT i = 0; i < rows - 1; i++)
 	{
-		for (UINT j = 0; j < columns; j++)
+		for (UINT j = 0; j < columns - 1; j++)
 		{
 			//abc
 			indices[k] = i * columns + j;
