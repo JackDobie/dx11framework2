@@ -8,10 +8,10 @@ Terrain::Terrain(ID3D11Device* d3dDevice, Geometry* _geometry)
 	//pIndexBuffer = indexBuffer;
 }
 
-void Terrain::MakePlane(UINT rows, UINT columns, UINT width, UINT depth)
+void Terrain::MakePlane(UINT m, UINT n, UINT width, UINT depth, string heightmap)
 {
-	UINT vertexCount = rows * columns;
-	UINT indexCount = (rows - 1) * (columns - 1) * 2;
+	UINT vertexCount = m * n;
+	UINT indexCount = (m - 1) * (n - 1) * 2;
 	geometry->numberOfIndices = indexCount;
 
 	vector<SimpleVertex> verts;
@@ -21,27 +21,27 @@ void Terrain::MakePlane(UINT rows, UINT columns, UINT width, UINT depth)
 	float halfDepth = 0.5f * depth;
 	
 	// calculates distance between each row and column
-	float dx = width / (columns - 1);
-	float dz = depth / (rows - 1);
+	float dx = width / (n - 1);
+	float dz = depth / (m - 1);
 
 	verts.resize(vertexCount);
 
+	LoadHeightMap(m, n, heightmap);
 	float x = 0;
-	float y = 0;
 	float z = 0;
-	for (UINT i = 0; i < rows; i++)
+	for (UINT i = 0; i < m; i++)
 	{
 		float z = halfDepth - i * dz;
-		for (UINT j = 0; j < columns; j++)
+		for (UINT j = 0; j < n; j++)
 		{
 			float x = -halfWidth + j * dx;
 			SimpleVertex vertex;
-			vertex.Pos = XMFLOAT3(x, y, z);
+			vertex.Pos = XMFLOAT3(x, heightMapVec[i * n + j], z);
 			vertex.Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
-			vertex.TexC.x = j * (columns - 1);
-			vertex.TexC.y = i * (rows - 1);
+			vertex.TexC.x = j * (n - 1);
+			vertex.TexC.y = i * (m - 1);
 	
-			verts[i * columns + j] = vertex;
+			verts[i * n + j] = vertex;
 	
 			//x += dx;
 		}
@@ -70,18 +70,18 @@ void Terrain::MakePlane(UINT rows, UINT columns, UINT width, UINT depth)
 
 	// make tris from quads
 	UINT k = 0;
-	for (UINT i = 0; i < rows - 1; i++)
+	for (UINT i = 0; i < m - 1; i++)
 	{
-		for (UINT j = 0; j < columns - 1; j++)
+		for (UINT j = 0; j < n - 1; j++)
 		{
 			//abc
-			indices[k] = i * columns + j;
-			indices[k + 1] = i * columns + j + 1;
-			indices[k + 2] = (i + 1) * columns + j;
+			indices[k] = i * n + j;
+			indices[k + 1] = i * n + j + 1;
+			indices[k + 2] = (i + 1) * n + j;
 			//cbd
-			indices[k + 3] = (i + 1) * columns + j;
-			indices[k + 4] = i * columns + j + 1;
-			indices[k + 5] = (i + 1) * columns + j + 1;
+			indices[k + 3] = (i + 1) * n + j;
+			indices[k + 4] = i * n + j + 1;
+			indices[k + 5] = (i + 1) * n + j + 1;
 			k += 6; // go to next quad
 		}
 	}
@@ -96,4 +96,32 @@ void Terrain::MakePlane(UINT rows, UINT columns, UINT width, UINT depth)
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = indices.data();
 	pd3dDevice->CreateBuffer(&bd, &InitData, &geometry->indexBuffer);
+}
+
+vector<float>* Terrain::LoadHeightMap(UINT width, UINT height, string heightmap)
+{
+	vector<unsigned char> in(width * height);
+
+	ifstream inFile;
+	inFile.open(heightmap.c_str(), ios_base::binary);
+
+	if (inFile)
+	{
+		inFile.read((char*)&in[0], in.size());
+
+		inFile.close();
+	}
+	else
+	{
+		Debug::Print("Unable to open hightmap: " + heightmap);
+	}
+
+	heightMapVec.resize(width * height, 0);
+
+	for (UINT i = 0; i < width * width; i++)
+	{
+		heightMapVec[i] = (in[i] / 255.0f) * 1.0f;
+	}
+
+	return &heightMapVec;
 }

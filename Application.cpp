@@ -138,7 +138,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	terrainPlaneGeometry.vertexBufferOffset = 0;
 	terrainPlaneGeometry.vertexBufferStride = sizeof(SimpleVertex);
 	Terrain* terrain = new Terrain(_pd3dDevice, &terrainPlaneGeometry);
-	terrain->MakePlane(10, 10, 25, 25);
+	terrain->MakePlane(10, 10, 25, 25, "Resources/Heightmap.raw");
 
 	Material shinyMaterial;
 	shinyMaterial.ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
@@ -152,8 +152,6 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	noSpecMaterial.specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	noSpecMaterial.specularPower = 0.0f;
 
-
-	
 	//GameObject* gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, new Transform(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(XMConvertToRadians(90.0f), 0.0f, 0.0f), XMFLOAT3(15.0f, 15.0f, 15.0f)), true, 1.0f, false);
 	///*gameObject->SetPosition(0.0f, 0.0f, 0.0f);
 	//gameObject->SetScale(15.0f, 15.0f, 15.0f);
