@@ -1,6 +1,6 @@
 #include "GameObject.h"
 
-GameObject::GameObject(string type, Geometry geometry, Material material, Transform* _transform, bool _useConstAccel, float mass, bool gravity)
+GameObject::GameObject(string type, Geometry geometry, Material material, Transform* _transform, bool _useConstAccel, float mass, bool gravity, float boundingSphereRadius)
 {
 	_type = type;
 	appearance = new Appearance(geometry, material, nullptr);
@@ -8,7 +8,7 @@ GameObject::GameObject(string type, Geometry geometry, Material material, Transf
 	_parent = nullptr;
 	transform = _transform;
 	//particleModel = new ParticleModel(transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime);
-	rbd = new Rigidbody(geometry.modelDimensions, transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime);
+	rbd = new Rigidbody(geometry.modelDimensions, transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime, boundingSphereRadius);
 	mRotation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
 	rbd->orientation = mRotation;
 }
@@ -29,20 +29,28 @@ void GameObject::Update(float t)
 	XMMATRIX mScale = XMMatrixScaling(transform->scale.x, transform->scale.y, transform->scale.z);
 	
 	//create rotation matrix
-	mRotation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
-	XMFLOAT4 fRotation;
-	XMStoreFloat4(&fRotation, XMQuaternionRotationMatrix(mRotation));
-	//turn matrix into quaternion
-	Quaternion quatRotation = Quaternion(fRotation.w, fRotation.x, fRotation.y, fRotation.z);
-	quatRotation.normalise();
-	//apply transformation matrix
-	CalculateTransformMatrixRowMajor(mRotation, transform->position, quatRotation);
 
-	//rbd->orientation = mRotation;
 	if (_type.find("Cube") != string::npos)
 	{
 		mRotation = rbd->orientation;
 	}
+	else
+	{
+		mRotation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
+		XMFLOAT4 fRotation;
+		XMStoreFloat4(&fRotation, XMQuaternionRotationMatrix(mRotation));
+		//turn matrix into quaternion
+		Quaternion quatRotation = Quaternion(fRotation.w, fRotation.x, fRotation.y, fRotation.z);
+		quatRotation.normalise();
+		//apply transformation matrix
+		CalculateTransformMatrixRowMajor(mRotation, transform->position, quatRotation);
+	}
+
+	////rbd->orientation = mRotation;
+	//if (_type.find("Cube") != string::npos)
+	//{
+	//	mRotation = rbd->orientation;
+	//}
 
 	XMMATRIX mTranslation = XMMatrixTranslation(transform->position.x, transform->position.y, transform->position.z);
 

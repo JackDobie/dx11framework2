@@ -1,6 +1,6 @@
 #include "ParticleModel.h"
 
-ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float _deltaTime)
+ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float _deltaTime, float _boundSphereRadius)
 {
 	transform = _transform;
 	useConstAccel = _useConstAccel;
@@ -15,6 +15,8 @@ ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT
 	drag = XMFLOAT3(0, 0, 0);
 	thrustEnabled = false;
 	thrustForce = (objectMass * gravityForce) * 1.5f;
+	boundingSphereRadius = _boundSphereRadius;
+	enableBoundingSphere = boundingSphereRadius > 0.0f ? true : false; //disable bound sphere if less not greater than 0
 }
 ParticleModel::~ParticleModel()
 {

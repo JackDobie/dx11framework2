@@ -9,7 +9,7 @@
 class ParticleModel
 {
 public:
-	ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float _deltaTime);
+	ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float _deltaTime, float _boundSphereRadius);
 	~ParticleModel();
 
 	void Update(float deltaTime);
@@ -55,6 +55,9 @@ public:
 
 	bool GetThrustEnabled() { return thrustEnabled; }
 	void SetThrustEnabled(bool isEnabled) { thrustEnabled = isEnabled; }
+
+	float GetBoundingSphereRadius() { return boundingSphereRadius; }
+	void SetBoundingSphereRadius(float newRadius) { boundingSphereRadius = newRadius; }
 private:
 	void Move();
 
@@ -85,4 +88,7 @@ private:
 
 	bool thrustEnabled;
 	float thrustForce;
+
+	float boundingSphereRadius;
+	bool enableBoundingSphere;
 };

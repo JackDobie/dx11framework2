@@ -138,7 +138,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	terrainPlaneGeometry.vertexBufferOffset = 0;
 	terrainPlaneGeometry.vertexBufferStride = sizeof(SimpleVertex);
 	Terrain* terrain = new Terrain(_pd3dDevice, &terrainPlaneGeometry);
-	terrain->MakePlane(10, 10, 25, 25, "Resources/Heightmap.raw");
+	terrain->MakePlane(50, 50, 100, 100, "Resources/Heightmap.raw");
 
 	Material shinyMaterial;
 	shinyMaterial.ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
@@ -158,14 +158,14 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	//gameObject->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);*/
 	//gameObject->SetTextureRV(_pGroundTextureRV);
 
-	GameObject* gameObject = new GameObject("Terrain", terrainPlaneGeometry, noSpecMaterial, new Transform(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f)), true, 1.0f, false);
+	GameObject* gameObject = new GameObject("Terrain", terrainPlaneGeometry, noSpecMaterial, new Transform(XMFLOAT3(0.0f, -1.0f, -10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f)), true, 1.0f, false, 0.0f);
 	gameObject->SetTextureRV(_pGroundTextureRV);
 
 	_gameObjects.push_back(gameObject);
 
 	for (int i = 0; i < NUMBER_OF_CUBES; i++)
 	{
-		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f + (i * 2.0f), 0.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 2.5f, true);
+		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f + (i * 2.0f), 0.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 2.5f, true, 1.0f);
 		/*gameObject->SetScale(0.5f, 0.5f, 0.5f);
 		gameObject->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
 		gameObject->GetParticleModel()->SetMass(5.0f);
@@ -175,12 +175,12 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 		_gameObjects.push_back(gameObject);
 	}
-	gameObject = new GameObject("donut", donutGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f, 0.5f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 5.0f, false);
-	/*gameObject->SetScale(0.5f, 0.5f, 0.5f);
-	gameObject->SetPosition(-4.0f, 0.5f, 10.0f);*/
-	gameObject->SetTextureRV(_pTextureRV);
+	//gameObject = new GameObject("donut", donutGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f, 0.5f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 5.0f, false);
+	///*gameObject->SetScale(0.5f, 0.5f, 0.5f);
+	//gameObject->SetPosition(-4.0f, 0.5f, 10.0f);*/
+	//gameObject->SetTextureRV(_pTextureRV);
 
-	_gameObjects.push_back(gameObject);
+	//_gameObjects.push_back(gameObject);
 
 	//CreateGrid(5, 5, 10, 10);
 
@@ -646,7 +646,7 @@ void Application::Update()
 		moveBackward(4);
 	}
 
-	/*if (GetAsyncKeyState(0x57))
+	if (GetAsyncKeyState(0x51))
 	{
 		_gameObjects[1]->GetRigidbody()->SetThrustEnabled(true);
 	}
@@ -654,14 +654,14 @@ void Application::Update()
 	{
 		if(_gameObjects[1]->GetRigidbody()->GetThrustEnabled())
 			_gameObjects[1]->GetRigidbody()->SetThrustEnabled(false);
+	}
+
+	/*if (GetAsyncKeyState(0x45))
+	{
+		_gameObjects[1]->AddRotation(0.0f, 1.0f, 1.0f);
 	}*/
 
 	if (GetAsyncKeyState(0x45))
-	{
-		_gameObjects[1]->AddRotation(0.0f, 1.0f, 1.0f);
-	}
-
-	if (GetAsyncKeyState(0x52) & 0x8000 != 0)
 	{
 		_gameObjects[1]->mRotation = _gameObjects[1]->GetRigidbody()->CalcOrientation(deltaTime);
 	}

@@ -35,8 +35,9 @@ void Terrain::MakePlane(UINT m, UINT n, UINT width, UINT depth, string heightmap
 		for (UINT j = 0; j < n; j++)
 		{
 			float x = -halfWidth + j * dx;
+			float y = heightMapVec[i * n + j];
 			SimpleVertex vertex;
-			vertex.Pos = XMFLOAT3(x, heightMapVec[i * n + j], z);
+			vertex.Pos = XMFLOAT3(x, y, z);
 			vertex.Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
 			vertex.TexC.x = j * (n - 1);
 			vertex.TexC.y = i * (m - 1);
@@ -120,7 +121,7 @@ vector<float>* Terrain::LoadHeightMap(UINT width, UINT height, string heightmap)
 
 	for (UINT i = 0; i < width * width; i++)
 	{
-		heightMapVec[i] = (in[i] / 255.0f) * 1.0f;
+		heightMapVec[i] = (in[i] / 255.0f) * 3.0f;
 	}
 
 	return &heightMapVec;

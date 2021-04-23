@@ -9,7 +9,7 @@ using namespace DirectX;
 class Rigidbody : public ParticleModel
 {
 public:
-	Rigidbody(XMFLOAT3 modelDimensions, Transform* transform, bool useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float deltaTime) : ParticleModel(transform, useConstAccel, initialVelocty, initialAcceleration, mass, gravity, deltaTime)
+	Rigidbody(XMFLOAT3 modelDimensions, Transform* transform, bool useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float deltaTime, float boundSphereRadius) : ParticleModel(transform, useConstAccel, initialVelocty, initialAcceleration, mass, gravity, deltaTime, boundSphereRadius)
 	{
 		inertiaTensor._11 = 0.08333333333 * objectMass * ((modelDimensions.y * modelDimensions.y) + (modelDimensions.z * modelDimensions.z));
 		inertiaTensor._12 = 0;
@@ -46,7 +46,7 @@ public:
 	Quaternion qOrientation;
 	XMMATRIX orientation;
 private:
-	float angularDamp = 0.9f;
+	float angularDamp = 0.5f;
 	XMFLOAT3X3 inertiaTensor;
 
 	XMVECTOR angularAcceleration;

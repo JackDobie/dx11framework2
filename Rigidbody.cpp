@@ -4,7 +4,7 @@ XMVECTOR Rigidbody::CalcAngularAcceleration()
 {
 	XMMATRIX matTensor = XMLoadFloat3x3(&inertiaTensor);
 	XMMATRIX invTensor = XMMatrixInverse(nullptr, matTensor);
-	XMVECTOR torque = Torque(XMVectorSet(0.5f, 0.5f, 0.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f));
+	XMVECTOR torque = Torque(XMVectorSet(0.5f, 1.0f, 0.5f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f));
 	angularAcceleration = XMVector3Transform(torque, invTensor);
 	return angularAcceleration;
 }

@@ -15,28 +15,10 @@
 using namespace DirectX;
 using namespace std;
 
-//struct Geometry
-//{
-//	ID3D11Buffer* vertexBuffer;
-//	ID3D11Buffer* indexBuffer;
-//	int numberOfIndices;
-//
-//	UINT vertexBufferStride;
-//	UINT vertexBufferOffset;
-//};
-//
-//struct Material
-//{
-//	XMFLOAT4 diffuse;
-//	XMFLOAT4 ambient;
-//	XMFLOAT4 specular;
-//	float specularPower;
-//};
-
 class GameObject
 {
 public:
-	GameObject(string type, Geometry geometry, Material material, Transform* _transform, bool _useConstAccel, float mass, bool gravity);
+	GameObject(string type, Geometry geometry, Material material, Transform* _transform, bool _useConstAccel, float mass, bool gravity, float boundingSphereRadius);
 	~GameObject();
 
 	// Setters and Getters for position/rotation/scale
