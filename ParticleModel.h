@@ -58,6 +58,9 @@ public:
 
 	float GetBoundingSphereRadius() { return boundingSphereRadius; }
 	void SetBoundingSphereRadius(float newRadius) { boundingSphereRadius = newRadius; }
+
+	bool CollisionCheck(XMFLOAT3 position, float radius);
+	//bool CollisionCheck(GameObject* otherObject); //including gameobject breaks code. do not use this
 private:
 	void Move();
 

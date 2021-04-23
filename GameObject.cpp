@@ -29,7 +29,6 @@ void GameObject::Update(float t)
 	XMMATRIX mScale = XMMatrixScaling(transform->scale.x, transform->scale.y, transform->scale.z);
 	
 	//create rotation matrix
-
 	if (_type.find("Cube") != string::npos)
 	{
 		mRotation = rbd->orientation;
@@ -46,12 +45,6 @@ void GameObject::Update(float t)
 		CalculateTransformMatrixRowMajor(mRotation, transform->position, quatRotation);
 	}
 
-	////rbd->orientation = mRotation;
-	//if (_type.find("Cube") != string::npos)
-	//{
-	//	mRotation = rbd->orientation;
-	//}
-
 	XMMATRIX mTranslation = XMMatrixTranslation(transform->position.x, transform->position.y, transform->position.z);
 
 	XMStoreFloat4x4(&_world, mScale * mRotation * mTranslation);
@@ -61,7 +54,6 @@ void GameObject::Update(float t)
 		XMStoreFloat4x4(&_world, this->GetWorldMatrix() * _parent->GetWorldMatrix());
 	}
 
-	//particleModel->Update(t);
 	rbd->Update(t);
 }
 

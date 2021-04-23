@@ -5,6 +5,8 @@
 #include <d3dcompiler.h>
 #include <directxmath.h>
 #include <directxcolors.h>
+#include <vector>
+#include <algorithm>
 #include "DDSTextureLoader.h"
 #include "resource.h"
 #include "Camera.h"
@@ -13,7 +15,6 @@
 #include "Quaternion.h"
 #include "Terrain.h"
 
-#include <vector>
 /*
 //#include <SpriteFont.h>
 #include "CommonStates.h"

@@ -16,7 +16,7 @@ ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT
 	thrustEnabled = false;
 	thrustForce = (objectMass * gravityForce) * 1.5f;
 	boundingSphereRadius = _boundSphereRadius;
-	enableBoundingSphere = boundingSphereRadius > 0.0f ? true : false; //disable bound sphere if less not greater than 0
+	enableBoundingSphere = boundingSphereRadius > 0.0f ? true : false; //disable bound sphere if not greater than 0
 }
 ParticleModel::~ParticleModel()
 {
@@ -158,4 +158,22 @@ void ParticleModel::DragTurbFlow()
 	drag.y = -dragMag * unitVel.y;
 	drag.z = -dragMag * unitVel.z;
 
+}
+
+bool ParticleModel::CollisionCheck(XMFLOAT3 _position, float _radius)
+{
+	// use pythagoras to find distance as float
+	float dx = _position.x - transform->position.x;
+	float dy = _position.y - transform->position.y;
+	float dz = _position.z - transform->position.z;
+	float distance = sqrt(dx * dx + dy * dy + dz + dz) - _radius;
+
+	if (distance < boundingSphereRadius)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
