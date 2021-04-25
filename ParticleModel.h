@@ -57,7 +57,8 @@ public:
 	void SetThrustEnabled(bool isEnabled) { thrustEnabled = isEnabled; }
 
 	float GetBoundingSphereRadius() { return boundingSphereRadius; }
-	void SetBoundingSphereRadius(float newRadius) { boundingSphereRadius = newRadius; }
+	void SetBoundingSphereRadius(float newRadius) { boundingSphereRadius = newRadius; enableBoundingSphere = newRadius > 0.0f ? true : false; }
+	bool GetBoundingSphereEnabled() { return enableBoundingSphere; }
 
 	bool CollisionCheck(XMFLOAT3 position, float radius);
 	//bool CollisionCheck(GameObject* otherObject); //including gameobject breaks code. do not use this

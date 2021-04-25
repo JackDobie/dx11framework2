@@ -138,7 +138,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	terrainPlaneGeometry.vertexBufferOffset = 0;
 	terrainPlaneGeometry.vertexBufferStride = sizeof(SimpleVertex);
 	Terrain* terrain = new Terrain(_pd3dDevice, &terrainPlaneGeometry);
-	terrain->MakePlane(50, 50, 100, 100, "Resources/Heightmap.raw");
+	terrain->MakePlane(10, 10, 100, 100, "Resources/Heightmap.raw");
 
 	Material shinyMaterial;
 	shinyMaterial.ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
@@ -158,7 +158,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	//gameObject->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);*/
 	//gameObject->SetTextureRV(_pGroundTextureRV);
 
-	GameObject* gameObject = new GameObject("Terrain", terrainPlaneGeometry, noSpecMaterial, new Transform(XMFLOAT3(0.0f, -1.0f, -10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f)), true, 1.0f, false, 0.0f);
+	GameObject* gameObject = new GameObject("Terrain", terrainPlaneGeometry, noSpecMaterial, new Transform(XMFLOAT3(0.0f, 0.0f, -10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f)), true, 1.0f, false, 0.0f);
 	gameObject->SetTextureRV(_pGroundTextureRV);
 
 	_gameObjects.push_back(gameObject);
@@ -167,7 +167,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	{
 		float dimensions[3] = { cubeGeometry.modelDimensions.x, cubeGeometry.modelDimensions.y, cubeGeometry.modelDimensions.z };
 		sort(dimensions, dimensions + 3); // finds largest from xyz to get bounding sphere size
-		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f + (i * 2.0f), 0.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 2.5f, true, dimensions[2]);
+		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f + (i * 2.0f), 0.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 2.5f, true, dimensions[2] / 2);
 		/*gameObject->SetScale(0.5f, 0.5f, 0.5f);
 		gameObject->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
 		gameObject->GetParticleModel()->SetMass(5.0f);
@@ -722,13 +722,19 @@ void Application::Update()
 
 	for (int i = 0; i < _gameObjects.size(); i++)
 	{
-		for (int j = 0; j < _gameObjects.size(); j++)
+		if (_gameObjects[i]->GetRigidbody()->GetBoundingSphereEnabled())
 		{
-			if (j != i)
+			for (int j = 0; j < _gameObjects.size(); j++)
 			{
-				if (_gameObjects[i]->GetRigidbody()->CollisionCheck(_gameObjects[j]->GetTransform()->position, _gameObjects[j]->GetRigidbody()->GetBoundingSphereRadius()))
+				if (j != i)
 				{
-					Debug::Print(_gameObjects[i]->GetType() + " has collided with " + _gameObjects[j]->GetType());
+					if (_gameObjects[j]->GetRigidbody()->GetBoundingSphereEnabled())
+					{
+						if (_gameObjects[i]->GetRigidbody()->CollisionCheck(_gameObjects[j]->GetTransform()->position, _gameObjects[j]->GetRigidbody()->GetBoundingSphereRadius()))
+						{
+							Debug::Print(_gameObjects[i]->GetType() + " has collided with " + _gameObjects[j]->GetType());
+						}
+					}
 				}
 			}
 		}
