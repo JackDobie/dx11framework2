@@ -3,8 +3,10 @@
 #include <directxmath.h>
 #include <d3d11.h>
 #include <vector>
+#include <algorithm>
 #include "Transform.h"
 #include "Debug.h"
+using namespace std;
 
 class ParticleModel
 {
@@ -26,8 +28,10 @@ public:
 	void SetScale(float x, float y, float z) { transform->scale.x = x; transform->scale.y = y; transform->scale.z = z; }
 	XMFLOAT3 GetScale() const { return transform->scale; }
 
+	XMFLOAT3 GetVelocity() { return velocity; }
 	void SetVelocity(XMFLOAT3 newVelocity) { velocity = newVelocity; }
 	void AddVelocity(XMFLOAT3 addVel);
+	XMFLOAT3 GetAcceleration() { return acceleration; }
 	void SetAcceleration(XMFLOAT3 newAcceleration) { acceleration = newAcceleration; }
 	void AddAcceleration(XMFLOAT3 addAcc);
 
@@ -43,7 +47,7 @@ public:
 	bool GetGravity() { return useGravity; }
 	void SetGravity(bool gravity) { useGravity = gravity; }
 
-	std::vector<XMFLOAT3> GetForces() { return forces; }
+	vector<XMFLOAT3> GetForces() { return forces; }
 	/// <summary> Adds a force to add constant acceleration to the object </summary>
 	void AddForce(XMFLOAT3 newForce) { forces.push_back(newForce); }
 	/// <summary> Adds a force to add constant acceleration to the object </summary>
@@ -57,11 +61,14 @@ public:
 	void SetThrustEnabled(bool isEnabled) { thrustEnabled = isEnabled; }
 
 	float GetBoundingSphereRadius() { return boundingSphereRadius; }
-	void SetBoundingSphereRadius(float newRadius) { boundingSphereRadius = newRadius; enableBoundingSphere = newRadius > 0.0f ? true : false; }
+	void SetBoundingSphereRadius(float newRadius) { boundingSphereRadius = newRadius;/* enableBoundingSphere = newRadius > 0.0f ? true : false;*/ }
 	bool GetBoundingSphereEnabled() { return enableBoundingSphere; }
 
-	bool CollisionCheck(XMFLOAT3 position, float radius);
+	bool CheckCollision(XMFLOAT3 otherPos, float otherRadius);
+	bool SphereCollisionCheck(XMFLOAT3 otherPos, float otherRadius);
 	//bool CollisionCheck(GameObject* otherObject); //including gameobject breaks code. do not use this
+	void Collide(XMFLOAT3 otherPos, float otherRadius);
+	void SphereCollide(XMFLOAT3 otherPos, float otherRadius);
 private:
 	void Move();
 
@@ -83,7 +90,7 @@ private:
 	bool useConstAccel;
 
 	XMFLOAT3 netForce;
-	std::vector<XMFLOAT3> forces;
+	vector<XMFLOAT3> forces;
 
 	float deltaTime;
 

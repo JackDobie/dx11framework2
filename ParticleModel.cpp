@@ -16,7 +16,9 @@ ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT
 	thrustEnabled = false;
 	thrustForce = (objectMass * gravityForce) * 1.5f;
 	boundingSphereRadius = _boundSphereRadius;
-	enableBoundingSphere = boundingSphereRadius > 0.0f ? true : false; //disable bound sphere if not greater than 0
+	enableBoundingSphere = _boundSphereRadius > 0.0f ? true : false; //disable bound sphere if not greater than 0
+	//boundSphere = new BoundingSphere(_boundSphereRadius, transform);
+	//boundSphere->SetEnabled(_boundSphereRadius > 0.0f ? true : false); //disable bound sphere if not greater than 0
 }
 ParticleModel::~ParticleModel()
 {
@@ -119,7 +121,7 @@ void ParticleModel::Move()
 			thrustEnabled = false;*/
 	}
 
-	if (velocity.x < 15 && velocity.y < 15 && velocity.z < 15)
+	if (velocity.x < (objectMass * 2) && velocity.y < (objectMass * 2) && velocity.z < (objectMass * 2))
 	{
 		// update velocity of object by adding change relative to previously calculated velocity
 		XMFLOAT3 oldVel = velocity;
@@ -160,13 +162,25 @@ void ParticleModel::DragTurbFlow()
 
 }
 
-bool ParticleModel::CollisionCheck(XMFLOAT3 _position, float _radius)
+bool ParticleModel::CheckCollision(XMFLOAT3 otherPos, float otherRadius)
+{
+	if (enableBoundingSphere)
+	{
+		return SphereCollisionCheck(otherPos, otherRadius);// boundSphere->CheckCollision(otherPos, otherRadius);
+	}
+	else
+	{
+		return false;
+	}
+}
+bool ParticleModel::SphereCollisionCheck(XMFLOAT3 otherPos, float otherRadius)
 {
 	// use pythagoras to find distance as float
-	float dx = _position.x - transform->position.x;
-	float dy = _position.y - transform->position.y;
-	float dz = _position.z - transform->position.z;
-	float distance = sqrt(dx * dx + dy * dy + dz + dz) - _radius;
+	float dx = otherPos.x - transform->position.x;
+	float dy = otherPos.y - transform->position.y;
+	float dz = otherPos.z - transform->position.z;
+	float distance = sqrt(dx * dx + dy * dy + dz + dz) - otherRadius;
+	//distance = fabs(distance) - otherRadius;
 
 	if (distance < boundingSphereRadius)
 	{
@@ -176,4 +190,83 @@ bool ParticleModel::CollisionCheck(XMFLOAT3 _position, float _radius)
 	{
 		return false;
 	}
+}
+
+void ParticleModel::Collide(XMFLOAT3 otherPos, float otherRadius)
+{
+	if (enableBoundingSphere)
+	{
+		SphereCollide(otherPos, otherRadius);
+		//boundSphere->Collide(otherPos, otherRadius);
+	}
+}
+void ParticleModel::SphereCollide(XMFLOAT3 otherPos, float otherRadius)
+{
+	float dx = otherPos.x - transform->position.x;
+	float dy = otherPos.y - transform->position.y;
+	float dz = otherPos.z - transform->position.z;
+	float pos[3] = { dx, dy, dz };
+	sort(pos, pos + 3); //sort to find if x y or z is shortest
+
+	if (pos[0] == dx)
+	{
+		for each(XMFLOAT3 force in forces)
+		{
+			force.x = 0.0f;
+		}
+		velocity.x = 0.0f;
+		acceleration.x = 0.0f;
+		if (dx > 0.0f) // if other object x distance is positive
+		{
+			//transform->position.x += dx * 0.1f;
+			transform->position.x = otherPos.x - otherRadius;
+			//transform->position.x -= 0.5f;
+		}
+		else
+		{
+			//transform->position.x -= dx * 0.1f;
+			transform->position.x = otherPos.x + otherRadius;
+			//transform->position.x += 0.5f;
+		}
+	}
+	//if (pos[0] == dy)
+	//{
+	//	for each (XMFLOAT3 force in forces)
+	//	{
+	//		force.y = 0.0f;
+	//	}
+	//	velocity.y = -velocity.y * 0.2f;
+	//	acceleration.y = -acceleration.y * 0.2f;
+	//	if (dy > 0.0f)
+	//	{
+	//		//transform->position.y += dy * 0.1f;
+	//		transform->position.y = _position.y + _radius;
+	//	}
+	//	else
+	//	{
+	//		//transform->position.y -= dy * 0.1f;
+	//		transform->position.y = _position.y - _radius;
+	//	}
+	//}
+	//if (pos[0] == dz)
+	//{
+	//	for each (XMFLOAT3 force in forces)
+	//	{
+	//		force.z = 0.0f;
+	//	}
+	//	velocity.z = -velocity.z * 0.5f;
+	//	acceleration.z = -acceleration.z * 0.5f;
+	//	//if (dz > 0.0f)
+	//	//{
+	//	//	//transform->position.z += dz * 0.1f;
+	//	//	//transform->position.z = otherPos.z - otherRadius;
+	//	//	transform->position.z -= 0.5f;
+	//	//}
+	//	//else
+	//	//{
+	//	//	//transform->position.z -= dz * 0.1f;
+	//	//	//transform->position.z = otherPos.z + otherRadius;
+	//	//	transform->position.z += 0.5f;
+	//	//}
+	//}
 }
