@@ -9,7 +9,7 @@ using namespace DirectX;
 class Rigidbody : public ParticleModel
 {
 public:
-	Rigidbody(XMFLOAT3 modelDimensions, Transform* transform, bool useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float deltaTime, float boundSphereRadius) : ParticleModel(transform, useConstAccel, initialVelocty, initialAcceleration, mass, gravity, deltaTime, boundSphereRadius)
+	Rigidbody(XMFLOAT3 modelDimensions, Transform* transform, bool useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float deltaTime, bool enableCollision, Geometry geometry) : ParticleModel(transform, useConstAccel, initialVelocty, initialAcceleration, mass, gravity, deltaTime, enableCollision, geometry)
 	{
 		inertiaTensor._11 = 0.08333333333 * objectMass * ((modelDimensions.y * modelDimensions.y) + (modelDimensions.z * modelDimensions.z));
 		inertiaTensor._12 = 0;

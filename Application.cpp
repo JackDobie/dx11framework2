@@ -165,9 +165,9 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 	for (int i = 0; i < NUMBER_OF_CUBES; i++)
 	{
-		float dimensions[3] = { cubeGeometry.modelDimensions.x, cubeGeometry.modelDimensions.y, cubeGeometry.modelDimensions.z };
-		sort(dimensions, dimensions + 3); // finds largest from xyz to get bounding sphere size
-		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f + (i * 2.0f), 0.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), false, 2.5f, true, dimensions[2] / 2);
+		//float dimensions[3] = { cubeGeometry.modelDimensions.x, cubeGeometry.modelDimensions.y, cubeGeometry.modelDimensions.z };
+		//sort(dimensions, dimensions + 3); // finds largest from xyz to get bounding sphere size
+		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f + (i * 2.0f), 0.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f)), true, 2.5f, true, true);
 		/*gameObject->SetScale(0.5f, 0.5f, 0.5f);
 		gameObject->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
 		gameObject->GetParticleModel()->SetMass(5.0f);
@@ -722,19 +722,19 @@ void Application::Update()
 
 	for (int i = 0; i < _gameObjects.size(); i++)
 	{
-		if (_gameObjects[i]->GetRigidbody()->GetBoundingSphereEnabled())
+		if (_gameObjects[i]->GetRigidbody()->GetCollisionEnabled())
 		{
 			for (int j = 0; j < _gameObjects.size(); j++)
 			{
 				if (j != i)
 				{
-					if (_gameObjects[j]->GetRigidbody()->GetBoundingSphereEnabled())
+					if (_gameObjects[j]->GetRigidbody()->GetCollisionEnabled())
 					{
-						if (_gameObjects[i]->GetRigidbody()->CheckCollision(_gameObjects[j]->GetTransform()->position, _gameObjects[j]->GetRigidbody()->GetBoundingSphereRadius()))
+						if (_gameObjects[i]->GetRigidbody()->CheckCollision(_gameObjects[j]->GetTransform()->position, _gameObjects[j]->GetRigidbody()->GetAABBFaces()))
 						{
 							static int k = 0;
 							Debug::Print(to_string(k++) + _gameObjects[i]->GetType() + " has collided with " + _gameObjects[j]->GetType() + "\n");
-							_gameObjects[i]->GetRigidbody()->Collide(_gameObjects[j]->GetTransform()->position, _gameObjects[j]->GetRigidbody()->GetBoundingSphereRadius());
+							_gameObjects[i]->GetRigidbody()->Collide(_gameObjects[j]->GetTransform()->position, _gameObjects[j]->GetRigidbody()->GetAABBFaces());
 							//_gameObjects[j]->GetRigidbody()->Collide(_gameObjects[i]->GetTransform()->position, _gameObjects[i]->GetRigidbody()->GetBoundingSphereRadius());
 							
 							//_gameObjects[i] respond to collision

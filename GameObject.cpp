@@ -1,6 +1,6 @@
 #include "GameObject.h"
 
-GameObject::GameObject(string type, Geometry geometry, Material material, Transform* _transform, bool _useConstAccel, float mass, bool gravity, float boundingSphereRadius)
+GameObject::GameObject(string type, Geometry geometry, Material material, Transform* _transform, bool _useConstAccel, float mass, bool gravity, bool enableCollision)
 {
 	_type = type;
 	appearance = new Appearance(geometry, material, nullptr);
@@ -8,7 +8,7 @@ GameObject::GameObject(string type, Geometry geometry, Material material, Transf
 	_parent = nullptr;
 	transform = _transform;
 	//particleModel = new ParticleModel(transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime);
-	rbd = new Rigidbody(geometry.modelDimensions, transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime, boundingSphereRadius);
+	rbd = new Rigidbody(geometry.modelDimensions, transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime, enableCollision, geometry);
 	mRotation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
 	rbd->orientation = mRotation;
 }

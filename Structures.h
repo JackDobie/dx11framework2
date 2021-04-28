@@ -115,3 +115,15 @@ struct Vector3
 		this->z = float3.z;
 	}
 };
+
+struct AABBFace
+{
+	float minX;
+	float maxX;
+
+	float minY;
+	float maxY;
+
+	float minZ;
+	float maxZ;
+};

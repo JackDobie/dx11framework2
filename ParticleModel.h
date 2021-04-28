@@ -6,12 +6,13 @@
 #include <algorithm>
 #include "Transform.h"
 #include "Debug.h"
+#include "Structures.h"
 using namespace std;
 
 class ParticleModel
 {
 public:
-	ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float _deltaTime, float _boundSphereRadius);
+	ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float _deltaTime, bool enableCollision, Geometry _geometry);
 	~ParticleModel();
 
 	void Update(float deltaTime);
@@ -60,15 +61,19 @@ public:
 	bool GetThrustEnabled() { return thrustEnabled; }
 	void SetThrustEnabled(bool isEnabled) { thrustEnabled = isEnabled; }
 
-	float GetBoundingSphereRadius() { return boundingSphereRadius; }
-	void SetBoundingSphereRadius(float newRadius) { boundingSphereRadius = newRadius;/* enableBoundingSphere = newRadius > 0.0f ? true : false;*/ }
-	bool GetBoundingSphereEnabled() { return enableBoundingSphere; }
+	//float GetBoundingSphereRadius() { return boundingSphereRadius; }
+	//void SetBoundingSphereRadius(float newRadius) { boundingSphereRadius = newRadius;/* enableBoundingSphere = newRadius > 0.0f ? true : false;*/ }
+	//bool GetBoundingSphereEnabled() { return enableBoundingSphere; }
+	void SetCollisionEnabled(bool enabled) { useCollision = enabled; }
+	bool GetCollisionEnabled() { return useCollision; }
 
-	bool CheckCollision(XMFLOAT3 otherPos, float otherRadius);
-	bool SphereCollisionCheck(XMFLOAT3 otherPos, float otherRadius);
+	vector<AABBFace> GetAABBFaces() { return AABBFaces; }
+
+	bool CheckCollision(XMFLOAT3 otherPos, vector<AABBFace> otherFaces);
+	//bool SphereCollisionCheck(XMFLOAT3 otherPos, float otherRadius);
 	//bool CollisionCheck(GameObject* otherObject); //including gameobject breaks code. do not use this
-	void Collide(XMFLOAT3 otherPos, float otherRadius);
-	void SphereCollide(XMFLOAT3 otherPos, float otherRadius);
+	void Collide(XMFLOAT3 otherPos, vector<AABBFace> otherFaces);
+	//void SphereCollide(XMFLOAT3 otherPos, float otherRadius);
 private:
 	void Move();
 
@@ -79,6 +84,9 @@ private:
 	void DragForce(bool laminar);
 	void DragLamFlow();
 	void DragTurbFlow();
+
+	void CreateAABB();
+
 	float dragFactor;
 	XMFLOAT3 drag;
 
@@ -100,6 +108,9 @@ private:
 	bool thrustEnabled;
 	float thrustForce;
 
-	float boundingSphereRadius;
-	bool enableBoundingSphere;
+	bool useCollision;
+	
+	Geometry geometry;
+
+	vector<AABBFace> AABBFaces;
 };

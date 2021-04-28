@@ -1,6 +1,6 @@
 #include "ParticleModel.h"
 
-ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float _deltaTime, float _boundSphereRadius)
+ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT3 initialVelocty, XMFLOAT3 initialAcceleration, float mass, bool gravity, float _deltaTime, bool enableCollision, Geometry _geometry)
 {
 	transform = _transform;
 	useConstAccel = _useConstAccel;
@@ -15,10 +15,13 @@ ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT
 	drag = XMFLOAT3(0, 0, 0);
 	thrustEnabled = false;
 	thrustForce = (objectMass * gravityForce) * 1.5f;
-	boundingSphereRadius = _boundSphereRadius;
-	enableBoundingSphere = _boundSphereRadius > 0.0f ? true : false; //disable bound sphere if not greater than 0
-	//boundSphere = new BoundingSphere(_boundSphereRadius, transform);
-	//boundSphere->SetEnabled(_boundSphereRadius > 0.0f ? true : false); //disable bound sphere if not greater than 0
+	useCollision = enableCollision;
+	geometry = _geometry;
+	
+	if (enableCollision)
+	{
+		CreateAABB();
+	}
 }
 ParticleModel::~ParticleModel()
 {
@@ -162,111 +165,111 @@ void ParticleModel::DragTurbFlow()
 
 }
 
-bool ParticleModel::CheckCollision(XMFLOAT3 otherPos, float otherRadius)
+bool ParticleModel::CheckCollision(XMFLOAT3 otherPos, vector<AABBFace> otherFaces)
 {
-	if (enableBoundingSphere)
+	if (useCollision)
 	{
-		return SphereCollisionCheck(otherPos, otherRadius);// boundSphere->CheckCollision(otherPos, otherRadius);
+		for each (AABBFace a in AABBFaces)
+		{
+			for each (AABBFace b in otherFaces)
+			{
+				if (a.minX + transform->position.x <= b.maxX + otherPos.x &&
+					a.maxX + transform->position.x >= b.minX + otherPos.x &&
+					a.minY + transform->position.y <= b.maxY + otherPos.y &&
+					a.maxY + transform->position.y >= b.minY + otherPos.y &&
+					a.minZ + transform->position.z <= b.maxZ + otherPos.z &&
+					a.maxZ + transform->position.z >= b.minZ + otherPos.z)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	else
 	{
 		return false;
 	}
 }
-bool ParticleModel::SphereCollisionCheck(XMFLOAT3 otherPos, float otherRadius)
-{
-	// use pythagoras to find distance as float
-	float dx = otherPos.x - transform->position.x;
-	float dy = otherPos.y - transform->position.y;
-	float dz = otherPos.z - transform->position.z;
-	float distance = sqrt(dx * dx + dy * dy + dz + dz) - otherRadius;
-	//distance = fabs(distance) - otherRadius;
 
-	if (distance < boundingSphereRadius)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+void ParticleModel::Collide(XMFLOAT3 otherPos, vector<AABBFace> otherFaces)
+{
+	//collide
 }
 
-void ParticleModel::Collide(XMFLOAT3 otherPos, float otherRadius)
+void ParticleModel::CreateAABB()
 {
-	if (enableBoundingSphere)
-	{
-		SphereCollide(otherPos, otherRadius);
-		//boundSphere->Collide(otherPos, otherRadius);
-	}
-}
-void ParticleModel::SphereCollide(XMFLOAT3 otherPos, float otherRadius)
-{
-	float dx = otherPos.x - transform->position.x;
-	float dy = otherPos.y - transform->position.y;
-	float dz = otherPos.z - transform->position.z;
-	float pos[3] = { dx, dy, dz };
-	sort(pos, pos + 3); //sort to find if x y or z is shortest
+	AABBFace face;
 
-	if (pos[0] == dx)
-	{
-		for each(XMFLOAT3 force in forces)
-		{
-			force.x = 0.0f;
-		}
-		velocity.x = 0.0f;
-		acceleration.x = 0.0f;
-		if (dx > 0.0f) // if other object x distance is positive
-		{
-			//transform->position.x += dx * 0.1f;
-			transform->position.x = otherPos.x - otherRadius;
-			//transform->position.x -= 0.5f;
-		}
-		else
-		{
-			//transform->position.x -= dx * 0.1f;
-			transform->position.x = otherPos.x + otherRadius;
-			//transform->position.x += 0.5f;
-		}
-	}
-	//if (pos[0] == dy)
-	//{
-	//	for each (XMFLOAT3 force in forces)
-	//	{
-	//		force.y = 0.0f;
-	//	}
-	//	velocity.y = -velocity.y * 0.2f;
-	//	acceleration.y = -acceleration.y * 0.2f;
-	//	if (dy > 0.0f)
-	//	{
-	//		//transform->position.y += dy * 0.1f;
-	//		transform->position.y = _position.y + _radius;
-	//	}
-	//	else
-	//	{
-	//		//transform->position.y -= dy * 0.1f;
-	//		transform->position.y = _position.y - _radius;
-	//	}
-	//}
-	//if (pos[0] == dz)
-	//{
-	//	for each (XMFLOAT3 force in forces)
-	//	{
-	//		force.z = 0.0f;
-	//	}
-	//	velocity.z = -velocity.z * 0.5f;
-	//	acceleration.z = -acceleration.z * 0.5f;
-	//	//if (dz > 0.0f)
-	//	//{
-	//	//	//transform->position.z += dz * 0.1f;
-	//	//	//transform->position.z = otherPos.z - otherRadius;
-	//	//	transform->position.z -= 0.5f;
-	//	//}
-	//	//else
-	//	//{
-	//	//	//transform->position.z -= dz * 0.1f;
-	//	//	//transform->position.z = otherPos.z + otherRadius;
-	//	//	transform->position.z += 0.5f;
-	//	//}
-	//}
+	// front face
+	face.minX = geometry.centreOfMass.x - (geometry.modelDimensions.x / 2);
+	face.maxX = geometry.centreOfMass.x + (geometry.modelDimensions.x / 2);
+
+	face.minY = geometry.centreOfMass.y - (geometry.modelDimensions.y / 2);
+	face.maxY = geometry.centreOfMass.y + (geometry.modelDimensions.y / 2);
+
+	face.minZ = geometry.centreOfMass.z - (geometry.modelDimensions.z / 2);
+	face.maxZ = geometry.centreOfMass.z - (geometry.modelDimensions.z / 2);
+
+	AABBFaces.push_back(face);
+
+	// back face
+	face.minX = geometry.centreOfMass.x - (geometry.modelDimensions.x / 2);
+	face.maxX = geometry.centreOfMass.x + (geometry.modelDimensions.x / 2);
+
+	face.minY = geometry.centreOfMass.y - (geometry.modelDimensions.y / 2);
+	face.maxY = geometry.centreOfMass.y + (geometry.modelDimensions.y / 2);
+
+	face.minZ = geometry.centreOfMass.z + (geometry.modelDimensions.z / 2);
+	face.maxZ = geometry.centreOfMass.z + (geometry.modelDimensions.z / 2);
+
+	AABBFaces.push_back(face);
+
+	// left face
+	face.minX = geometry.centreOfMass.x - (geometry.modelDimensions.x / 2);
+	face.maxX = geometry.centreOfMass.x - (geometry.modelDimensions.x / 2);
+
+	face.minY = geometry.centreOfMass.y - (geometry.modelDimensions.y / 2);
+	face.maxY = geometry.centreOfMass.y + (geometry.modelDimensions.y / 2);
+
+	face.minZ = geometry.centreOfMass.z - (geometry.modelDimensions.z / 2);
+	face.maxZ = geometry.centreOfMass.z + (geometry.modelDimensions.z / 2);
+
+	AABBFaces.push_back(face);
+
+	// right face
+	face.minX = geometry.centreOfMass.x + (geometry.modelDimensions.x / 2);
+	face.maxX = geometry.centreOfMass.x + (geometry.modelDimensions.x / 2);
+
+	face.minY = geometry.centreOfMass.y - (geometry.modelDimensions.y / 2);
+	face.maxY = geometry.centreOfMass.y + (geometry.modelDimensions.y / 2);
+
+	face.minZ = geometry.centreOfMass.z - (geometry.modelDimensions.z / 2);
+	face.maxZ = geometry.centreOfMass.z + (geometry.modelDimensions.z / 2);
+
+	AABBFaces.push_back(face);
+
+	// top face
+	face.minX = geometry.centreOfMass.x - (geometry.modelDimensions.x / 2);
+	face.maxX = geometry.centreOfMass.x + (geometry.modelDimensions.x / 2);
+
+	face.minY = geometry.centreOfMass.y + (geometry.modelDimensions.y / 2);
+	face.maxY = geometry.centreOfMass.y + (geometry.modelDimensions.y / 2);
+
+	face.minZ = geometry.centreOfMass.z - (geometry.modelDimensions.z / 2);
+	face.maxZ = geometry.centreOfMass.z + (geometry.modelDimensions.z / 2);
+
+	AABBFaces.push_back(face);
+
+	// top face
+	face.minX = geometry.centreOfMass.x - (geometry.modelDimensions.x / 2);
+	face.maxX = geometry.centreOfMass.x + (geometry.modelDimensions.x / 2);
+
+	face.minY = geometry.centreOfMass.y - (geometry.modelDimensions.y / 2);
+	face.maxY = geometry.centreOfMass.y - (geometry.modelDimensions.y / 2);
+
+	face.minZ = geometry.centreOfMass.z - (geometry.modelDimensions.z / 2);
+	face.maxZ = geometry.centreOfMass.z + (geometry.modelDimensions.z / 2);
+
+	AABBFaces.push_back(face);
 }

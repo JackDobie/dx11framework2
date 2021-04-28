@@ -18,7 +18,7 @@ using namespace std;
 class GameObject
 {
 public:
-	GameObject(string type, Geometry geometry, Material material, Transform* _transform, bool _useConstAccel, float mass, bool gravity, float boundingSphereRadius);
+	GameObject(string type, Geometry geometry, Material material, Transform* _transform, bool _useConstAccel, float mass, bool gravity, bool enableCollision);
 	~GameObject();
 
 	// Setters and Getters for position/rotation/scale
