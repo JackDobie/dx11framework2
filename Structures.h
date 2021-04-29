@@ -126,4 +126,6 @@ struct AABBFace
 
 	float minZ;
 	float maxZ;
+
+	XMFLOAT3 direction;
 };

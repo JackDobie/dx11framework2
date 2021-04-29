@@ -104,7 +104,6 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	objMeshData = OBJLoader::Load("Models/donut.obj", _pd3dDevice);
 	donutGeometry.modelDimensions = objMeshData.ModelDimensions;
 	donutGeometry.centreOfMass = objMeshData.CentreOfMass;
-	Debug::Print("X: " + to_string(objMeshData.CentreOfMass.x) + ", Y: " + to_string(objMeshData.CentreOfMass.y) + ", Z: " + to_string(objMeshData.CentreOfMass.z));
 	donutGeometry.indexBuffer = objMeshData.IndexBuffer;
 	donutGeometry.numberOfIndices = objMeshData.IndexCount;
 	donutGeometry.vertexBuffer = objMeshData.VertexBuffer;
@@ -165,16 +164,8 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 	for (int i = 0; i < NUMBER_OF_CUBES; i++)
 	{
-		//float dimensions[3] = { cubeGeometry.modelDimensions.x, cubeGeometry.modelDimensions.y, cubeGeometry.modelDimensions.z };
-		//sort(dimensions, dimensions + 3); // finds largest from xyz to get bounding sphere size
-		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f + (i * 2.0f), 0.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f)), true, 2.5f, true, true);
-		/*gameObject->SetScale(0.5f, 0.5f, 0.5f);
-		gameObject->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
-		gameObject->GetParticleModel()->SetMass(5.0f);
-		gameObject->GetParticleModel()->SetGravity(true);*/
-		//gameObject->GetParticleModel()->AddForceX(0.5f);
+		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(-2.0f + (i * 4.0f), 0.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f)), true, 2.5f, true, true);
 		gameObject->SetTextureRV(_pTextureRV);
-
 		_gameObjects.push_back(gameObject);
 	}
 	//gameObject = new GameObject("donut", donutGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f, 0.5f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 5.0f, false);
@@ -593,7 +584,11 @@ void Application::moveForward(int objectNumber)
 {
 	if (_gameObjects.size() - 1 >= objectNumber)
 	{
-		_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(10.0f, 0.0f, 0.0f));
+		int objnum = objectNumber;
+		if(!_gameObjects[objnum]->GetRigidbody()->colliding)
+			_gameObjects[objnum]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(10.0f, 0.0f, 0.0f));
+		if(_gameObjects[objnum]->GetRigidbody()->colliding)
+			_gameObjects[objnum]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(-10.0f, 0.0f, 0.0f));
 	}
 }
 
@@ -601,7 +596,11 @@ void Application::moveBackward(int objectNumber)
 {
 	if (_gameObjects.size() + 2 >= objectNumber)
 	{
-		_gameObjects[objectNumber - 2]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(-10.0f, 0.0f, 0.0f));
+		int objnum = objectNumber - 2;
+		if (!_gameObjects[objnum]->GetRigidbody()->colliding)
+			_gameObjects[objnum]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(-10.0f, 0.0f, 0.0f));
+		if (_gameObjects[objnum]->GetRigidbody()->colliding)
+			_gameObjects[objnum]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(10.0f, 0.0f, 0.0f));
 	}
 }
 
@@ -738,8 +737,8 @@ void Application::Update()
 					{
 						if (_gameObjects[i]->GetRigidbody()->CheckCollision(_gameObjects[j]->GetTransform()->position, _gameObjects[j]->GetRigidbody()->GetAABBFaces()))
 						{
-							//static int k = 0;
-							//Debug::Print(to_string(k++) + _gameObjects[i]->GetType() + " has collided with " + _gameObjects[j]->GetType() + "\n");
+							static int k = 0;
+							Debug::Print(to_string(k++) + _gameObjects[i]->GetType() + " has collided with " + _gameObjects[j]->GetType() + "\n");
 							_gameObjects[i]->GetRigidbody()->Collide(_gameObjects[j]->GetTransform()->position, _gameObjects[j]->GetRigidbody()->GetAABBFaces());
 							//_gameObjects[j]->GetRigidbody()->Collide(_gameObjects[i]->GetTransform()->position, _gameObjects[i]->GetRigidbody()->GetBoundingSphereRadius());
 							

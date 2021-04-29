@@ -74,6 +74,8 @@ public:
 	//bool CollisionCheck(GameObject* otherObject); //including gameobject breaks code. do not use this
 	void Collide(XMFLOAT3 otherPos, vector<AABBFace> otherFaces);
 	//void SphereCollide(XMFLOAT3 otherPos, float otherRadius);
+
+	bool colliding;
 private:
 	void Move();
 
