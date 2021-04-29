@@ -53,9 +53,15 @@ void ParticleModel::AddVelocity(XMFLOAT3 addVel)
 }
 void ParticleModel::AddAcceleration(XMFLOAT3 addAcc)
 {
-	acceleration.x += addAcc.x;
-	acceleration.y += addAcc.y;
-	acceleration.z += addAcc.z;
+	float clamprangeAdd = 2;
+	float clamprangeAcc = 15;
+	acceleration.x += clamp(addAcc.x, -clamprangeAdd, clamprangeAdd);
+	acceleration.y += clamp(addAcc.y, -clamprangeAdd, clamprangeAdd);
+	acceleration.z += clamp(addAcc.z, -clamprangeAdd, clamprangeAdd);
+
+	acceleration.x = clamp(acceleration.x, -clamprangeAcc, clamprangeAcc);
+	acceleration.y = clamp(acceleration.y, -clamprangeAcc, clamprangeAcc);
+	acceleration.z = clamp(acceleration.z, -clamprangeAcc, clamprangeAcc);
 }
 
 void ParticleModel::AddVelOrAcc(XMFLOAT3 addF3)
@@ -102,9 +108,9 @@ void ParticleModel::Move()
 {
 	// update world position of object by adding displacement to previously calculated position
 	XMFLOAT3 oldPos = transform->position;
-	transform->position.x = oldPos.x + velocity.x * deltaTime + 0.5f * acceleration.x * deltaTime * deltaTime;
-	transform->position.y = oldPos.y + velocity.y * deltaTime + 0.5f * acceleration.y * deltaTime * deltaTime;
-	transform->position.z = oldPos.z + velocity.z * deltaTime + 0.5f * acceleration.z * deltaTime * deltaTime;
+	transform->position.x = oldPos.x + velocity.x * deltaTime;// +0.5f * acceleration.x * deltaTime * deltaTime;
+	transform->position.y = oldPos.y + velocity.y * deltaTime;// +0.5f * acceleration.y * deltaTime * deltaTime;
+	transform->position.z = oldPos.z + velocity.z * deltaTime;// +0.5f * acceleration.z * deltaTime * deltaTime;
 
 	if (useGravity)
 	{
@@ -124,14 +130,23 @@ void ParticleModel::Move()
 			thrustEnabled = false;*/
 	}
 
-	if (velocity.x < (objectMass * 2) && velocity.y < (objectMass * 2) && velocity.z < (objectMass * 2))
-	{
-		// update velocity of object by adding change relative to previously calculated velocity
-		XMFLOAT3 oldVel = velocity;
-		velocity.x = oldVel.x + acceleration.x * deltaTime;
-		velocity.y = oldVel.y + acceleration.y * deltaTime;
-		velocity.z = oldVel.z + acceleration.z * deltaTime;
-	}
+	//if (velocity.x < (objectMass * 3) && velocity.y < (objectMass * 3) && velocity.z < (objectMass * 3))
+	//{
+		//if (velocity.x > -(objectMass * 3) && velocity.y > -(objectMass * 3) && velocity.z > -(objectMass * 3))
+		//{
+	// update velocity of object by adding change relative to previously calculated velocity
+	//static XMFLOAT3 oldVel = velocity;
+	velocity.x = velocity.x + acceleration.x * deltaTime;
+	velocity.y = velocity.y + acceleration.y * deltaTime;
+	velocity.z = velocity.z + acceleration.z * deltaTime;
+
+	float clamprange = 10;
+	velocity.x = clamp(velocity.x, -clamprange, clamprange);
+	velocity.y = clamp(velocity.y, -clamprange, clamprange);
+	velocity.z = clamp(velocity.z, -clamprange, clamprange);
+	Debug::Print(velocity);
+		//}
+	//}
 }
 
 void ParticleModel::MotionInFluid()

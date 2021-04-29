@@ -593,7 +593,7 @@ void Application::moveForward(int objectNumber)
 {
 	if (_gameObjects.size() - 1 >= objectNumber)
 	{
-		_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(1.0f, 0.0f, 0.0f));
+		_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(10.0f, 0.0f, 0.0f));
 	}
 }
 
@@ -601,7 +601,7 @@ void Application::moveBackward(int objectNumber)
 {
 	if (_gameObjects.size() + 2 >= objectNumber)
 	{
-		_gameObjects[objectNumber - 2]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(-1.0f, 0.0f, 0.0f));
+		_gameObjects[objectNumber - 2]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(-10.0f, 0.0f, 0.0f));
 	}
 }
 
@@ -630,22 +630,28 @@ void Application::Update()
 
 	//https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 	// Move gameobject
-	if (GetAsyncKeyState('1') & 0x8000 != 0)
+	if (GetAsyncKeyState('1'))
 	{
 		moveForward(1);
 	}
-	if (GetAsyncKeyState('2') & 0x8000 != 0)
+	if (GetAsyncKeyState('2'))
 	{
 		moveBackward(3);
 	}
 
-	if (GetAsyncKeyState('3') & 0x8000 != 0)
+	if (GetAsyncKeyState('3'))
 	{
 		moveForward(2);
 	}
-	if (GetAsyncKeyState('4') & 0x8000 != 0)
+	if (GetAsyncKeyState('4'))
 	{
 		moveBackward(4);
+	}
+
+	if (GetAsyncKeyState('6'))
+	{
+		_gameObjects[1]->GetRigidbody()->SetAcceleration(XMFLOAT3(0.0f, 0.0f, 0.0f));
+		_gameObjects[1]->GetRigidbody()->SetVelocity(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	}
 
 	if (GetAsyncKeyState(0x51))
@@ -732,8 +738,8 @@ void Application::Update()
 					{
 						if (_gameObjects[i]->GetRigidbody()->CheckCollision(_gameObjects[j]->GetTransform()->position, _gameObjects[j]->GetRigidbody()->GetAABBFaces()))
 						{
-							static int k = 0;
-							Debug::Print(to_string(k++) + _gameObjects[i]->GetType() + " has collided with " + _gameObjects[j]->GetType() + "\n");
+							//static int k = 0;
+							//Debug::Print(to_string(k++) + _gameObjects[i]->GetType() + " has collided with " + _gameObjects[j]->GetType() + "\n");
 							_gameObjects[i]->GetRigidbody()->Collide(_gameObjects[j]->GetTransform()->position, _gameObjects[j]->GetRigidbody()->GetAABBFaces());
 							//_gameObjects[j]->GetRigidbody()->Collide(_gameObjects[i]->GetTransform()->position, _gameObjects[i]->GetRigidbody()->GetBoundingSphereRadius());
 							

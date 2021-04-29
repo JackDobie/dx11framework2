@@ -20,3 +20,11 @@ void Debug::Print(float output)
 	sprintf_s(sz, "%f \n", output);
 	OutputDebugStringA(sz);
 }
+void Debug::Print(XMFLOAT3 output)
+{
+	string x = to_string(output.x);
+	string y = to_string(output.y);
+	string z = to_string(output.z);
+	string out = "X:" + x + ", Y:" + y + ", Z:" + z + "\n";
+	OutputDebugStringA(out.c_str());
+}
