@@ -38,15 +38,18 @@ public:
 	XMFLOAT3X3 GetInertiaTensor() { return inertiaTensor; }
 
 	XMVECTOR CalcAngularAcceleration();
+	XMVECTOR CalcAngularAcceleration(XMVECTOR torque);
 	XMVECTOR CalcAngularVelocity(float deltaTime);
 
 	void DampAngularVelocity(float deltaTime);
 
+	void Rotate(float deltaTime);
+	void Rotate(XMVECTOR torque, float deltaTime);
 	XMMATRIX CalcOrientation(float deltaTime);
 	Quaternion qOrientation;
 	XMMATRIX orientation;
 private:
-	float angularDamp = 0.5f;
+	float angularDamp = 1.0f;
 	XMFLOAT3X3 inertiaTensor;
 
 	XMVECTOR angularAcceleration;

@@ -8,6 +8,13 @@ XMVECTOR Rigidbody::CalcAngularAcceleration()
 	angularAcceleration = XMVector3Transform(torque, invTensor);
 	return angularAcceleration;
 }
+XMVECTOR Rigidbody::CalcAngularAcceleration(XMVECTOR torque)
+{
+	XMMATRIX matTensor = XMLoadFloat3x3(&inertiaTensor);
+	XMMATRIX invTensor = XMMatrixInverse(nullptr, matTensor);
+	angularAcceleration = XMVector3Transform(torque, invTensor);
+	return angularAcceleration;
+}
 
 XMVECTOR Rigidbody::CalcAngularVelocity(float deltaTime)
 {
@@ -22,10 +29,6 @@ void Rigidbody::DampAngularVelocity(float deltaTime)
 
 XMMATRIX Rigidbody::CalcOrientation(float deltaTime)
 {
-	CalcAngularAcceleration();
-	CalcAngularVelocity(deltaTime);
-	DampAngularVelocity(deltaTime);
-
 	XMFLOAT3 angVelV3;
 	XMStoreFloat3(&angVelV3, angularVelocity);
 	//Quaternion qOrientation;
@@ -34,4 +37,17 @@ XMMATRIX Rigidbody::CalcOrientation(float deltaTime)
 	//XMMATRIX orientation;
 	CalculateTransformMatrixRowMajor(orientation, GetPosition(), qOrientation);
 	return orientation;
+}
+
+void Rigidbody::Rotate(float deltaTime)
+{
+	CalcAngularAcceleration();
+	CalcAngularVelocity(deltaTime);
+	DampAngularVelocity(deltaTime);
+}
+void Rigidbody::Rotate(XMVECTOR torque, float deltaTime)
+{
+	CalcAngularAcceleration(torque);
+	CalcAngularVelocity(deltaTime);
+	DampAngularVelocity(deltaTime);
 }
