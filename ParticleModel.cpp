@@ -33,7 +33,7 @@ void ParticleModel::Update(float _deltaTime)
 {
 	deltaTime = _deltaTime;
 
-	MotionInFluid();
+	//MotionInFluid();
 
 	// calculate net external force
 	UpdateNetForce();

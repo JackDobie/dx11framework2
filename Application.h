@@ -14,6 +14,7 @@
 #include "OBJLoader.h"
 #include "Quaternion.h"
 #include "Terrain.h"
+#include "ImGUIManager.h"
 
 /*
 //#include <SpriteFont.h>
@@ -115,7 +116,7 @@ private:
 	Light basicLight;
 
 	vector<GameObject *> _gameObjects;
-
+	
 	Camera * _camera = nullptr;
 	float _cameraOrbitRadius = 7.0f;
 	float _cameraOrbitRadiusMin = 2.0f;
@@ -135,6 +136,8 @@ private:
 
 	ID3D11RasterizerState* CCWcullMode;
 	ID3D11RasterizerState* CWcullMode;
+
+	ImGUIManager* imguiManager;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);

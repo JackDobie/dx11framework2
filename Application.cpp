@@ -54,8 +54,8 @@ Application::Application()
 	CWcullMode= nullptr;
 	DSLessEqual = nullptr;
 	RSCullNone = nullptr;
-	 _WindowHeight = 0;
-	 _WindowWidth = 0;
+	_WindowHeight = 0;
+	_WindowWidth = 0;
 }
 
 Application::~Application()
@@ -100,6 +100,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	basicLight.SpecularPower = 20.0f;
 	basicLight.LightVecW = XMFLOAT3(0.0f, 1.0f, -1.0f);
 
+	//set up objects
 	Geometry donutGeometry;
 	objMeshData = OBJLoader::Load("Models/donut.obj", _pd3dDevice);
 	donutGeometry.modelDimensions = objMeshData.ModelDimensions;
@@ -176,6 +177,8 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	//_gameObjects.push_back(gameObject);
 
 	//CreateGrid(5, 5, 10, 10);
+
+	imguiManager = new ImGUIManager(_pd3dDevice, _pImmediateContext, &_hWnd);
 
 	return S_OK;
 }
@@ -648,6 +651,7 @@ void Application::Update()
 		dwTimeStart = dwTimeCur;
 	}
 
+	imguiManager->Update();
 
 	//https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 	// Move gameobjects
@@ -824,6 +828,8 @@ void Application::Update()
 
 void Application::Draw()
 {
+	imguiManager->Draw();
+
     //
     // Clear buffers
     //
