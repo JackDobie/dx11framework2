@@ -14,31 +14,12 @@
 #include "OBJLoader.h"
 #include "Quaternion.h"
 #include "Terrain.h"
-#include "ImGUIManager.h"
-
-/*
-//#include <SpriteFont.h>
-#include "CommonStates.h"
-//#include "DDSTextureLoader.h"
-#include "Effects.h"
-#include "GeometricPrimitive.h"
-#include "Model.h"
-#include "PrimitiveBatch.h"
-#include "ScreenGrab.h"
-#include "SpriteBatch.h"
-#include "SpriteFont.h"
-#include "VertexTypes.h"
-*/
 #include "GameObject.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
 
 using namespace DirectX;
-
-//struct SimpleVertex
-//{
-//    XMFLOAT3 PosL;
-//	XMFLOAT3 NormL;
-//	XMFLOAT2 Tex;
-//};
 
 #define NUMBER_OF_CUBES 2
 #define FPS_60 1.0f/60.0f
@@ -136,8 +117,6 @@ private:
 
 	ID3D11RasterizerState* CCWcullMode;
 	ID3D11RasterizerState* CWcullMode;
-
-	ImGUIManager* imguiManager;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);

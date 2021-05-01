@@ -178,7 +178,11 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 	//CreateGrid(5, 5, 10, 10);
 
-	imguiManager = new ImGUIManager(_pd3dDevice, _pImmediateContext, &_hWnd);
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui_ImplWin32_Init(_hWnd);
+	ImGui_ImplDX11_Init(_pd3dDevice, _pImmediateContext);
 
 	return S_OK;
 }
@@ -581,6 +585,10 @@ void Application::Cleanup()
 			gameObject = nullptr;
 		}
 	}
+
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
 }
 
 void Application::MoveLeft(int objectNumber)
@@ -651,7 +659,13 @@ void Application::Update()
 		dwTimeStart = dwTimeCur;
 	}
 
-	imguiManager->Update();
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::Begin("Demo window");
+	ImGui::Button("Hello!");
+	ImGui::End();
 
 	//https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 	// Move gameobjects
@@ -828,7 +842,6 @@ void Application::Update()
 
 void Application::Draw()
 {
-	imguiManager->Draw();
 
     //
     // Clear buffers
@@ -897,6 +910,9 @@ void Application::Draw()
 		// Draw object
 		gameObject->Draw(_pImmediateContext);
 	}
+
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
     //
     // Present our back buffer to our front buffer

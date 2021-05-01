@@ -15,10 +15,23 @@ GameObject::GameObject(string type, Geometry geometry, Material material, Transf
 
 GameObject::~GameObject()
 {
-	if (transform != nullptr) delete(transform);
+	if (transform)
+	{
+		delete transform;
+		transform = nullptr;
+	}
 	//if (particleModel != nullptr) delete(particleModel);
-	if (rbd != nullptr) delete(rbd);
-	if (appearance != nullptr) delete(appearance);
+	if (rbd)
+	{
+		delete rbd;
+		rbd = nullptr;
+	}
+
+	if (appearance)
+	{
+		delete appearance;
+		appearance = nullptr;
+	}
 }
 
 void GameObject::Update(float t)
