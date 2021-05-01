@@ -183,6 +183,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	ImGui_ImplWin32_Init(_hWnd);
 	ImGui_ImplDX11_Init(_pd3dDevice, _pImmediateContext);
+	ImGui::StyleColorsDark();
 
 	return S_OK;
 }
@@ -346,7 +347,7 @@ HRESULT Application::InitWindow(HINSTANCE hInstance, int nCmdShow)
 
     // Create window
     _hInst = hInstance;
-    RECT rc = {0, 0, 960, 540};
+    RECT rc = {0, 0, 1280, 720};
     AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
     _hWnd = CreateWindow(L"TutorialWindowClass", L"FGGC Semester 2 Framework", WS_OVERLAPPEDWINDOW,
                          CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance,
@@ -620,22 +621,22 @@ void Application::MoveBackward(int objectNumber)
 		_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, 10.0f));
 }
 
-void Application::StopMoveLeft(int objectNumber)
-{
-	_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(10.0f, 0.0f, 0.0f));
-}
-void Application::StopMoveRight(int objectNumber)
-{
-	_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(-10.0f, 0.0f, 0.0f));
-}
-void Application::StopMoveForward(int objectNumber)
-{
-	_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, -10.0f));
-}
-void Application::StopMoveBackward(int objectNumber)
-{
-	_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, 10.0f));
-}
+//void Application::StopMoveLeft(int objectNumber)
+//{
+//	_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(10.0f, 0.0f, 0.0f));
+//}
+//void Application::StopMoveRight(int objectNumber)
+//{
+//	_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(-10.0f, 0.0f, 0.0f));
+//}
+//void Application::StopMoveForward(int objectNumber)
+//{
+//	_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, -10.0f));
+//}
+//void Application::StopMoveBackward(int objectNumber)
+//{
+//	_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, 10.0f));
+//}
 
 void Application::Update()
 {
@@ -663,9 +664,7 @@ void Application::Update()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	ImGui::Begin("Demo window");
-	ImGui::Button("Hello!");
-	ImGui::End();
+	DrawUI();
 
 	//https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 	// Move gameobjects
@@ -673,64 +672,34 @@ void Application::Update()
 	{
 		MoveForward(1);
 	}
-
 	if (GetAsyncKeyState(0x4B) < 0) // K key
 	{
 		MoveBackward(1);
 	}
-	else if (GetAsyncKeyState(0x4B) > 0)
-	{
-		StopMoveBackward(1);
-	}
-
 	if (GetAsyncKeyState(0x4A) < 0) // J key
 	{
 		MoveLeft(1);
 	}
-	else if (GetAsyncKeyState(0x4A) > 0)
-	{
-		StopMoveLeft(1);
-	}
 	if (GetAsyncKeyState(0x4C) < 0) // L key
 	{
 		MoveRight(1);
-	}
-	else if (GetAsyncKeyState(0x4C) > 0)
-	{
-		StopMoveRight(1);
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD8) < 0)
 	{
 		MoveForward(2);
 	}
-	else if (GetAsyncKeyState(VK_NUMPAD8) > 0)
-	{
-		StopMoveForward(2);
-	}
 	if (GetAsyncKeyState(VK_NUMPAD2) < 0)
 	{
 		MoveBackward(2);
-	}
-	else if (GetAsyncKeyState(VK_NUMPAD2) > 0)
-	{
-		StopMoveBackward(2);
 	}
 	if (GetAsyncKeyState(VK_NUMPAD4) < 0)
 	{
 		MoveLeft(2);
 	}
-	else if (GetAsyncKeyState(VK_NUMPAD4) > 0)
-	{
-		StopMoveLeft(2);
-	}
 	if (GetAsyncKeyState(VK_NUMPAD6) < 0)
 	{
 		MoveRight(2);
-	}
-	else if (GetAsyncKeyState(VK_NUMPAD6) > 0)
-	{
-		StopMoveRight(2);
 	}
 
 	if (GetAsyncKeyState(0x51) < 0) // Q key
@@ -918,4 +887,12 @@ void Application::Draw()
     // Present our back buffer to our front buffer
     //
     _pSwapChain->Present(0, 0);
+}
+
+void Application::DrawUI()
+{
+	ImGui::Begin("Demo window");
+	ImGui::Text("Hello!");
+	ImGui::ShowStyleEditor();
+	ImGui::End();
 }

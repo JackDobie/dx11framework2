@@ -132,11 +132,7 @@ private:
 	void MoveForward(int objectNumber);
 	void MoveBackward(int objectNumber);
 
-	void StopMoveLeft(int objectNumber);
-	void StopMoveRight(int objectNumber);
-	void StopMoveForward(int objectNumber);
-	void StopMoveBackward(int objectNumber);
-
+	void DrawUI();
 public:
 	Application();
 	~Application();

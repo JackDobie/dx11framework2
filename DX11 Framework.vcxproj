@@ -377,7 +377,6 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="Debug.cpp" />
-    <ClCompile Include="ImGUIManager.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -407,7 +406,6 @@
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="ImGUIManager.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_dx11.h" />
