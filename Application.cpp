@@ -1,9 +1,16 @@
 #include "Application.h"
 
+Application* application;
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	PAINTSTRUCT ps;
 	HDC hdc;
+
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+		return true;
 
 	switch (message)
 	{
@@ -16,22 +23,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 
+	case WM_SIZE: // Handle window resizing
+	{
+		int width = LOWORD(lParam);
+		int height = HIWORD(lParam);
+
+		if (application != nullptr)
+			application->ResizeWindow(height, width);
+
+		break;
+	}
+
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
 	return 0;
-}
-
-bool Application::HandleKeyboard(MSG msg)
-{
-	switch (msg.wParam)
-	{
-	default:
-		break;
-	}
-
-	return false;
 }
 
 Application::Application()
@@ -92,6 +99,20 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	XMFLOAT3 up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
 	_camera = new Camera(eye, at, up, (float)_renderWidth, (float)_renderHeight, 0.01f, 200.0f);
+
+	//imgui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.WantCaptureMouse = true;
+	io.FontGlobalScale = 1.0f;
+	ImGui::StyleColorsDark();
+	ImGui_ImplWin32_Init(_hWnd);
+	ImGui_ImplDX11_Init(_pd3dDevice, _pImmediateContext);
+	ImFont* font = io.Fonts->AddFontFromFileTTF("Fonts/ProggyVector Regular.ttf", 25.0f);
+	IM_ASSERT(font != NULL);
+
+	application = this;
 
 	// Setup the scene's light
 	basicLight.AmbientLight = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -177,13 +198,6 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	//_gameObjects.push_back(gameObject);
 
 	//CreateGrid(5, 5, 10, 10);
-
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	ImGui_ImplWin32_Init(_hWnd);
-	ImGui_ImplDX11_Init(_pd3dDevice, _pImmediateContext);
-	ImGui::StyleColorsDark();
 
 	return S_OK;
 }
@@ -891,8 +905,31 @@ void Application::Draw()
 
 void Application::DrawUI()
 {
-	ImGui::Begin("Demo window");
-	ImGui::Text("Hello!");
+	ImGui::Begin("Controls window");
+	if (ImGui::CollapsingHeader("Objects", ImGuiTreeNodeFlags_None))
+	{
+		for each (GameObject* obj in _gameObjects)
+		{
+			if (ImGui::CollapsingHeader(obj->GetType().c_str(), ImGuiTreeNodeFlags_None))
+			{
+				XMFLOAT3 vel = obj->GetRigidbody()->GetVelocity();
+				XMFLOAT3 accel = obj->GetRigidbody()->GetAcceleration();
+				ImGui::Text(("Velocity:\nX:" + to_string(vel.x) + ", Y: " + to_string(vel.y) + ", Z: " + to_string(vel.z)).c_str());
+				ImGui::Text(("Acceleration:\nX:" + to_string(accel.x) + ", Y: " + to_string(accel.y) + ", Z: " + to_string(accel.z)).c_str());
+				ImGui::Checkbox("Drag", obj->GetRigidbody()->GetDragEnabled());
+			}
+		}
+	}
+
+	ImVec2 v = ImGui::GetWindowSize();
+	ImGui::Text("%f %f", v.x, v.y);
 	ImGui::ShowStyleEditor();
 	ImGui::End();
+}
+
+void Application::ResizeWindow(int height, int width)
+{
+	_WindowHeight = height;
+	_WindowWidth = width;
+	_camera->Reshape(_WindowWidth, _WindowHeight);
 }

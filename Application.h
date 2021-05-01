@@ -139,9 +139,9 @@ public:
 
 	HRESULT Initialise(HINSTANCE hInstance, int nCmdShow);
 
-	bool HandleKeyboard(MSG msg);
-
 	void Update();
 	void Draw();
+
+	void ResizeWindow(int height, int width);
 };
 

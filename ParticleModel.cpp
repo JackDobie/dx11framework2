@@ -18,7 +18,10 @@ ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT
 	useCollision = enableCollision;
 	geometry = _geometry;
 	colliding = false;
-	
+
+	enableDrag = false;
+	useLaminarDrag = true;
+
 	if (enableCollision)
 	{
 		CreateAABB();
@@ -33,7 +36,8 @@ void ParticleModel::Update(float _deltaTime)
 {
 	deltaTime = _deltaTime;
 
-	//MotionInFluid();
+	if(enableDrag)
+		MotionInFluid();
 
 	// calculate net external force
 	UpdateNetForce();

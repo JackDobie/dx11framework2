@@ -76,6 +76,9 @@ public:
 	//void SphereCollide(XMFLOAT3 otherPos, float otherRadius);
 
 	bool colliding;
+
+	bool* GetDragEnabled() { return &enableDrag; }
+	bool* GetUseLaminarDrag() { return &useLaminarDrag; }
 private:
 	void Move();
 
@@ -115,4 +118,7 @@ private:
 	Geometry geometry;
 
 	vector<AABBFace> AABBFaces;
+
+	bool enableDrag;
+	bool useLaminarDrag;
 };
