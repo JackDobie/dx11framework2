@@ -88,8 +88,6 @@ private:
 
 	ID3D11ShaderResourceView * _pGroundTextureRV = nullptr;
 
-	ID3D11ShaderResourceView* _pHerculesTextureRV = nullptr;
-
 	ID3D11SamplerState * _pSamplerLinear = nullptr;
 
 	MeshData objMeshData;

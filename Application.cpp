@@ -98,7 +98,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	XMFLOAT3 at = XMFLOAT3(0.0f, 0.0f, 1.0f);
 	XMFLOAT3 up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
-	_camera = new Camera(eye, at, up, (float)_renderWidth, (float)_renderHeight, 0.01f, 200.0f);
+	_camera = new Camera(eye, at, up, (float)_renderWidth, (float)_renderHeight, 0.01f, 1000.0f);
 
 	//imgui
 	IMGUI_CHECKVERSION();
@@ -909,88 +909,101 @@ void Application::Draw()
 
 void Application::DrawUI()
 {
-	ImGui::Begin("Objects");
-	for each (GameObject* obj in _gameObjects)
+	ImGui::Begin("Control Window");
+	if (ImGui::CollapsingHeader("Objects"))//, ImGuiTreeNodeFlags_None)
 	{
-		if (!(obj->GetType().find("Terrain") != string::npos))
+		for each (GameObject * obj in _gameObjects)
 		{
-			if (ImGui::CollapsingHeader(obj->GetType().c_str(), ImGuiTreeNodeFlags_None))
+			if (!(obj->GetType().find("Terrain") != string::npos))
 			{
-				// display information on position and speed
-				XMFLOAT3 pos = obj->GetRigidbody()->GetPosition();
-				XMFLOAT3 vel = obj->GetRigidbody()->GetVelocity();
-				XMFLOAT3 accel = obj->GetRigidbody()->GetAcceleration();
-				bool* dragEnabled = obj->GetRigidbody()->GetDragEnabled();
-				XMFLOAT3 dragForce = obj->GetRigidbody()->GetDragForce();
-				bool* rotating = obj->GetRigidbody()->GetRotating();
-				ImGui::Text(("Position:\nX:" + to_string(pos.x) + ", Y: " + to_string(pos.y) + ", Z: " + to_string(pos.z)).c_str());
-				ImGui::Text(("Velocity:\nX:" + to_string(vel.x) + ", Y: " + to_string(vel.y) + ", Z: " + to_string(vel.z)).c_str());
-				ImGui::Text(("Acceleration:\nX:" + to_string(accel.x) + ", Y: " + to_string(accel.y) + ", Z: " + to_string(accel.z)).c_str());
-				if (*dragEnabled)
+				if (ImGui::CollapsingHeader(obj->GetType().c_str()))
 				{
-					ImGui::Text(("Drag Force:\nX:" + to_string(dragForce.x) + ", Y: " + to_string(dragForce.y) + ", Z: " + to_string(dragForce.z)).c_str());
-				}
-				// buttons to reset position and speed
-				if (ImGui::Button("Reset position"))
-				{
-					obj->ResetPosition();
-				}
-				if (ImGui::Button("Reset speed"))
-				{
-					obj->GetRigidbody()->SetVelocity(XMFLOAT3(0.0f, 0.0f, 0.0f));
-					obj->GetRigidbody()->SetAcceleration(XMFLOAT3(0.0f, 0.0f, 0.0f));
-				}
-				ImGui::Checkbox("Drag", dragEnabled);
-				if (*dragEnabled)
-				{
-					static int e = 0;
-					if (ImGui::RadioButton("Laminar Drag", &e, 0))
+					// display information on position and speed
+					XMFLOAT3 pos = obj->GetRigidbody()->GetPosition();
+					XMFLOAT3 vel = obj->GetRigidbody()->GetVelocity();
+					XMFLOAT3 accel = obj->GetRigidbody()->GetAcceleration();
+					bool* dragEnabled = obj->GetRigidbody()->GetDragEnabled();
+					XMFLOAT3 dragForce = obj->GetRigidbody()->GetDragForce();
+					bool* rotating = obj->GetRigidbody()->GetRotating();
+					ImGui::Text(("Position:\nX:" + to_string(pos.x) + ", Y: " + to_string(pos.y) + ", Z: " + to_string(pos.z)).c_str());
+					ImGui::Text(("Velocity:\nX:" + to_string(vel.x) + ", Y: " + to_string(vel.y) + ", Z: " + to_string(vel.z)).c_str());
+					ImGui::Text(("Acceleration:\nX:" + to_string(accel.x) + ", Y: " + to_string(accel.y) + ", Z: " + to_string(accel.z)).c_str());
+					if (*dragEnabled)
 					{
-						obj->GetRigidbody()->SetUseLaminarDrag(true);
+						ImGui::Text(("Drag Force:\nX:" + to_string(dragForce.x) + ", Y: " + to_string(dragForce.y) + ", Z: " + to_string(dragForce.z)).c_str());
 					}
-					ImGui::SameLine();
-					if (ImGui::RadioButton("Turbulent Drag", &e, 1))
+					// buttons to reset position and speed
+					if (ImGui::Button("Reset position"))
 					{
-						obj->GetRigidbody()->SetUseLaminarDrag(false);
+						obj->ResetPosition();
 					}
+					if (ImGui::Button("Reset speed"))
+					{
+						obj->GetRigidbody()->SetVelocity(XMFLOAT3(0.0f, 0.0f, 0.0f));
+						obj->GetRigidbody()->SetAcceleration(XMFLOAT3(0.0f, 0.0f, 0.0f));
+					}
+					ImGui::Checkbox("Drag", dragEnabled);
+					if (*dragEnabled)
+					{
+						static int e = 0;
+						if (ImGui::RadioButton("Laminar Drag", &e, 0))
+						{
+							obj->GetRigidbody()->SetUseLaminarDrag(true);
+						}
+						ImGui::SameLine();
+						if (ImGui::RadioButton("Turbulent Drag", &e, 1))
+						{
+							obj->GetRigidbody()->SetUseLaminarDrag(false);
+						}
 
-					ImGui::SliderFloat("Drag Factor", obj->GetRigidbody()->GetDragFactor(), 0.0f, 1.0f);
-				}
-				if (obj->GetRigidbody()->colliding)
-					ImGui::Text("Colliding: true");
-				else
-					ImGui::Text("Colliding: false");
-				//ImGui::Text("Colliding: " + obj->GetRigidbody()->colliding ? "true" : "false");
+						ImGui::SliderFloat("Drag Factor", obj->GetRigidbody()->GetDragFactor(), 0.0f, 1.0f); //TODO: FIX THIS! currently affects both cubes
+					}
+					if (obj->GetRigidbody()->colliding)
+						ImGui::Text("Colliding: true");
+					else
+						ImGui::Text("Colliding: false");
+					//ImGui::Text("Colliding: " + obj->GetRigidbody()->colliding ? "true" : "false");
 
-				ImGui::Checkbox("Rotate", obj->GetRigidbody()->GetRotating());
-				if (*obj->GetRigidbody()->GetRotating())
-				{
-					obj->GetRigidbody()->SetAngularDamp(1.0f);
-					ImGui::SliderFloat("Angular Damp", obj->GetRigidbody()->GetAngularDamp(), 0.0f, 1.0f);
+					ImGui::Checkbox("Rotate", obj->GetRigidbody()->GetRotating());
+					if (*obj->GetRigidbody()->GetRotating())
+					{
+						ImGui::SliderFloat("Angular Damp", obj->GetRigidbody()->GetAngularDamp(), 0.0f, 1.0f);
+						//TODO: add input for torque position and force
+						//ImGui::InputFloat3("Torque position", v);
+					}
+					else
+					{
+						obj->GetRigidbody()->SetAngularDamp(0.0f);
+					}
 				}
-				else
-				{
-					obj->GetRigidbody()->SetAngularDamp(0.0f);
-				}
-				//if (ImGui::Button("Rotate"))
-				//{
-				//	//bool rot = *obj->GetRigidbody()->GetRotating();
-				//	obj->GetRigidbody()->SetRotating(true);
-				//}
-				//else
-				//{
-				//	obj->GetRigidbody()->SetRotating(false);
-				//}
 			}
-		}
-		else
-		{
-			ImGui::Text(obj->GetType().c_str());
+			else
+			{
+				ImGui::Text(obj->GetType().c_str());
+			}
 		}
 	}
 
-	ImVec2 v = ImGui::GetWindowSize();
-	ImGui::Text("%f %f", v.x, v.y);
+	if (ImGui::CollapsingHeader("Lighting"))//, ImGuiTreeNodeFlags_None)
+	{
+		float temp[4] = { basicLight.AmbientLight.x, basicLight.AmbientLight.y, basicLight.AmbientLight.z, basicLight.AmbientLight.w };
+		ImGui::SliderFloat4("Ambient Light", temp, 0.0f, 1.0f);
+		basicLight.AmbientLight = XMFLOAT4(temp[0], temp[1], temp[2], temp[3]);
+
+		float temp2[4] = { basicLight.DiffuseLight.x, basicLight.DiffuseLight.y, basicLight.DiffuseLight.z, basicLight.DiffuseLight.w };
+		ImGui::SliderFloat4("Diffuse Light", temp2, 0.0f, 1.0f);
+		basicLight.DiffuseLight = XMFLOAT4(temp2[0], temp2[1], temp2[2], temp2[3]);
+
+		float temp3[4] = { basicLight.SpecularLight.x, basicLight.SpecularLight.y, basicLight.SpecularLight.z, basicLight.SpecularLight.w };
+		ImGui::SliderFloat4("Speculaasdasdasdr Light", temp3, 0.0f, 1.0f);
+		basicLight.SpecularLight = XMFLOAT4(temp3[0], temp3[1], temp3[2], temp3[3]);
+
+		float* tempfloat = &basicLight.SpecularPower;
+		ImGui::SliderFloat("SpecularPower", tempfloat, 0.1f, 50.0f);
+		//basicLight.DiffuseLight = XMFLOAT4(tempf4[0], tempf4[1], tempf4[2], tempf4[3]);
+
+		ImGui::Text("LightVecW XYZ");
+	}
 	ImGui::End();
 }
 

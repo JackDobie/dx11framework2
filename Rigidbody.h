@@ -30,6 +30,8 @@ public:
 		orientation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
 		qOrientation = Quaternion();
 		rotating = false;
+		torquePoint = XMFLOAT3(0.5f, 1.0f, 0.5f);
+		torqueForce = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	}
 
 	XMVECTOR Torque(XMVECTOR point, XMVECTOR force) { return XMVector3Cross(point, force); }
@@ -45,7 +47,6 @@ public:
 	void DampAngularVelocity(float deltaTime);
 
 	void Rotate(float deltaTime);
-	void Rotate(XMVECTOR torque, float deltaTime);
 	XMMATRIX CalcOrientation(float deltaTime);
 	Quaternion qOrientation;
 	XMMATRIX orientation;
@@ -55,6 +56,9 @@ public:
 
 	float* GetAngularDamp() { return &angularDamp; }
 	void SetAngularDamp(float newAngDamp) { angularDamp = newAngDamp; }
+
+	XMFLOAT3 GetTorquePoint() { return torquePoint; }
+	XMFLOAT3 GetTorqueForce() { return torqueForce; }
 private:
 	float angularDamp = 1.0f;
 	XMFLOAT3X3 inertiaTensor;
@@ -63,4 +67,7 @@ private:
 	XMVECTOR angularVelocity;
 
 	bool rotating;
+
+	XMFLOAT3 torquePoint;
+	XMFLOAT3 torqueForce;
 };

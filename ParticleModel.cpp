@@ -89,10 +89,14 @@ void ParticleModel::UpdateNetForce()
 
 	if (useGravity)
 	{
-		netForce.y -= (objectMass * gravityForce); //mass * gravity
+		if (!colliding)
+			netForce.y -= (objectMass * gravityForce); //mass * gravity
+		else
+			acceleration.y = 0;
 
 		if (thrustEnabled)
 		{
+			thrustForce = clamp(thrustForce, -10.0f, 10.0f);
 			netForce.y += thrustForce;
 		}
 	}
@@ -142,7 +146,7 @@ void ParticleModel::Move()
 
 	float clamprange = 10;
 	velocity.x = clamp(velocity.x, -clamprange, clamprange);
-	velocity.y = clamp(velocity.y, -clamprange, clamprange);
+	velocity.y = clamp(velocity.y, -clamprange * 8, clamprange * 2);
 	velocity.z = clamp(velocity.z, -clamprange, clamprange);
 	//Debug::Print(velocity);
 
