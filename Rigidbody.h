@@ -29,6 +29,7 @@ public:
 		angularVelocity = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 		orientation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
 		qOrientation = Quaternion();
+		rotating = false;
 	}
 
 	XMVECTOR Torque(XMVECTOR point, XMVECTOR force) { return XMVector3Cross(point, force); }
@@ -48,10 +49,18 @@ public:
 	XMMATRIX CalcOrientation(float deltaTime);
 	Quaternion qOrientation;
 	XMMATRIX orientation;
+
+	bool* GetRotating() { return &rotating; }
+	void SetRotating(bool newRot) { rotating = newRot; }
+
+	float* GetAngularDamp() { return &angularDamp; }
+	void SetAngularDamp(float newAngDamp) { angularDamp = newAngDamp; }
 private:
 	float angularDamp = 1.0f;
 	XMFLOAT3X3 inertiaTensor;
 
 	XMVECTOR angularAcceleration;
 	XMVECTOR angularVelocity;
+
+	bool rotating;
 };

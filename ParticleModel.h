@@ -82,7 +82,6 @@ public:
 	void SetUseLaminarDrag(bool enabled) { useLaminarDrag = enabled; }
 	XMFLOAT3 GetDragForce() { return drag; }
 	float* GetDragFactor() { return &dragFactor; }
-	void SetDragFactor(float newDrag) { dragFactor = newDrag; }
 private:
 	void Move();
 

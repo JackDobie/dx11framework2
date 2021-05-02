@@ -45,6 +45,10 @@ void GameObject::Update(float t)
 	//create rotation matrix
 	if (_type.find("Cube") != string::npos)
 	{
+		if (*rbd->GetRotating())
+		{
+			rbd->Rotate(deltaTime);
+		}
 		mRotation =	rbd->CalcOrientation(deltaTime);
 	}
 	else
