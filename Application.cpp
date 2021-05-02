@@ -986,23 +986,20 @@ void Application::DrawUI()
 
 	if (ImGui::CollapsingHeader("Lighting"))//, ImGuiTreeNodeFlags_None)
 	{
-		float temp[4] = { basicLight.AmbientLight.x, basicLight.AmbientLight.y, basicLight.AmbientLight.z, basicLight.AmbientLight.w };
-		ImGui::SliderFloat4("Ambient Light", temp, 0.0f, 1.0f);
-		basicLight.AmbientLight = XMFLOAT4(temp[0], temp[1], temp[2], temp[3]);
+		float* temp[4] = { &basicLight.AmbientLight.x, &basicLight.AmbientLight.y, &basicLight.AmbientLight.z, &basicLight.AmbientLight.w };
+		ImGui::SliderFloat4("Ambient Light", *temp, 0.0f, 1.0f);
 
-		float temp2[4] = { basicLight.DiffuseLight.x, basicLight.DiffuseLight.y, basicLight.DiffuseLight.z, basicLight.DiffuseLight.w };
-		ImGui::SliderFloat4("Diffuse Light", temp2, 0.0f, 1.0f);
-		basicLight.DiffuseLight = XMFLOAT4(temp2[0], temp2[1], temp2[2], temp2[3]);
+		float* temp2[4] = { &basicLight.DiffuseLight.x, &basicLight.DiffuseLight.y, &basicLight.DiffuseLight.z, &basicLight.DiffuseLight.w };
+		ImGui::SliderFloat4("Diffuse Light", *temp2, 0.0f, 1.0f);
 
-		float temp3[4] = { basicLight.SpecularLight.x, basicLight.SpecularLight.y, basicLight.SpecularLight.z, basicLight.SpecularLight.w };
-		ImGui::SliderFloat4("Speculaasdasdasdr Light", temp3, 0.0f, 1.0f);
-		basicLight.SpecularLight = XMFLOAT4(temp3[0], temp3[1], temp3[2], temp3[3]);
+		float* temp3[4] = { &basicLight.SpecularLight.x, &basicLight.SpecularLight.y, &basicLight.SpecularLight.z, &basicLight.SpecularLight.w };
+		ImGui::SliderFloat4("Speculaasdasdasdr Light", *temp3, 0.0f, 1.0f);
 
 		float* tempfloat = &basicLight.SpecularPower;
 		ImGui::SliderFloat("SpecularPower", tempfloat, 0.1f, 50.0f);
-		//basicLight.DiffuseLight = XMFLOAT4(tempf4[0], tempf4[1], tempf4[2], tempf4[3]);
 
-		ImGui::Text("LightVecW XYZ");
+		float* temp4[3] = { &basicLight.LightVecW.x, &basicLight.LightVecW.y, &basicLight.LightVecW.z };
+		ImGui::InputFloat3("Light Vector", *temp4);
 	}
 	ImGui::End();
 }
