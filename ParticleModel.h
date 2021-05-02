@@ -78,7 +78,11 @@ public:
 	bool colliding;
 
 	bool* GetDragEnabled() { return &enableDrag; }
-	bool* GetUseLaminarDrag() { return &useLaminarDrag; }
+	bool GetUseLaminarDrag() { return useLaminarDrag; }
+	void SetUseLaminarDrag(bool enabled) { useLaminarDrag = enabled; }
+	XMFLOAT3 GetDragForce() { return drag; }
+	float* GetDragFactor() { return &dragFactor; }
+	void SetDragFactor(float newDrag) { dragFactor = newDrag; }
 private:
 	void Move();
 

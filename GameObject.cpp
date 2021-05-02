@@ -10,6 +10,7 @@ GameObject::GameObject(string type, Geometry geometry, Material material, Transf
 	//particleModel = new ParticleModel(transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime);
 	rbd = new Rigidbody(geometry.modelDimensions, transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime, enableCollision, geometry);
 	mRotation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
+	originalPos = transform->position;
 	rbd->orientation = mRotation;
 }
 
@@ -89,4 +90,9 @@ void GameObject::AddRotation(float x, float y, float z)
 {
 	transform->rotation = XMFLOAT3(transform->rotation.x + (x * deltaTime), transform->rotation.y + (y * deltaTime), transform->rotation.z + (z * deltaTime));
 	rbd->orientation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
+}
+
+void GameObject::ResetPosition()
+{
+	transform->position = originalPos;
 }

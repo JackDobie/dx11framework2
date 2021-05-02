@@ -11,7 +11,7 @@ ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT
 	netForce = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	deltaTime = _deltaTime;
 	gravityForce = 0.5f;
-	dragFactor = 0.2f;
+	dragFactor = 0.1f;
 	drag = XMFLOAT3(0, 0, 0);
 	thrustEnabled = false;
 	thrustForce = (objectMass * gravityForce) * 1.5f;
@@ -97,9 +97,16 @@ void ParticleModel::UpdateNetForce()
 		}
 	}
 
-	netForce.x += drag.x;
-	netForce.y += drag.y;
-	netForce.z += drag.z;
+	if (enableDrag)
+	{
+		velocity.x -= drag.x;
+		velocity.y -= drag.y;
+		velocity.z -= drag.z;
+
+		acceleration.x -= drag.x;
+		acceleration.y -= drag.y;
+		acceleration.z -= drag.z;
+	}
 }
 
 void ParticleModel::UpdateAccel()
@@ -149,7 +156,7 @@ void ParticleModel::Move()
 
 void ParticleModel::MotionInFluid()
 {
-	DragForce(true);
+	DragForce(useLaminarDrag);
 }
 void ParticleModel::DragForce(bool laminar)
 {
@@ -160,9 +167,9 @@ void ParticleModel::DragForce(bool laminar)
 }
 void ParticleModel::DragLamFlow()
 {
-	drag.x = -dragFactor * velocity.x;
-	drag.y = -dragFactor * velocity.y;
-	drag.z = -dragFactor * velocity.z;
+	drag.x = dragFactor * velocity.x;
+	drag.y = dragFactor * velocity.y;
+	drag.z = dragFactor * velocity.z;
 }
 void ParticleModel::DragTurbFlow()
 {
@@ -172,10 +179,9 @@ void ParticleModel::DragTurbFlow()
 
 	float dragMag = dragFactor * velMag * velMag;
 
-	drag.x = -dragMag * unitVel.x;
-	drag.y = -dragMag * unitVel.y;
-	drag.z = -dragMag * unitVel.z;
-
+	drag.x = dragMag * unitVel.x;
+	drag.y = dragMag * unitVel.y;
+	drag.z = dragMag * unitVel.z;
 }
 
 bool ParticleModel::CheckCollision(XMFLOAT3 otherPos, vector<AABBFace> otherFaces)

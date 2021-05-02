@@ -105,7 +105,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.WantCaptureMouse = true;
-	io.FontGlobalScale = 1.0f;
+	//io.FontGlobalScale = 1.0f;
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(_hWnd);
 	ImGui_ImplDX11_Init(_pd3dDevice, _pImmediateContext);
@@ -910,20 +910,60 @@ void Application::DrawUI()
 	{
 		for each (GameObject* obj in _gameObjects)
 		{
-			if (ImGui::CollapsingHeader(obj->GetType().c_str(), ImGuiTreeNodeFlags_None))
+			if (!(obj->GetType().find("Terrain") != string::npos))
 			{
-				XMFLOAT3 vel = obj->GetRigidbody()->GetVelocity();
-				XMFLOAT3 accel = obj->GetRigidbody()->GetAcceleration();
-				ImGui::Text(("Velocity:\nX:" + to_string(vel.x) + ", Y: " + to_string(vel.y) + ", Z: " + to_string(vel.z)).c_str());
-				ImGui::Text(("Acceleration:\nX:" + to_string(accel.x) + ", Y: " + to_string(accel.y) + ", Z: " + to_string(accel.z)).c_str());
-				ImGui::Checkbox("Drag", obj->GetRigidbody()->GetDragEnabled());
+				if (ImGui::CollapsingHeader(obj->GetType().c_str(), ImGuiTreeNodeFlags_None))
+				{
+					// display information on position and speed
+					XMFLOAT3 pos = obj->GetRigidbody()->GetPosition();
+					XMFLOAT3 vel = obj->GetRigidbody()->GetVelocity();
+					XMFLOAT3 accel = obj->GetRigidbody()->GetAcceleration();
+					bool* dragEnabled = obj->GetRigidbody()->GetDragEnabled();
+					XMFLOAT3 dragForce = obj->GetRigidbody()->GetDragForce();
+					ImGui::Text(("Position:\nX:" + to_string(pos.x) + ", Y: " + to_string(pos.y) + ", Z: " + to_string(pos.z)).c_str());
+					ImGui::Text(("Velocity:\nX:" + to_string(vel.x) + ", Y: " + to_string(vel.y) + ", Z: " + to_string(vel.z)).c_str());
+					ImGui::Text(("Acceleration:\nX:" + to_string(accel.x) + ", Y: " + to_string(accel.y) + ", Z: " + to_string(accel.z)).c_str());
+					if (*dragEnabled)
+					{
+						ImGui::Text(("Drag Force:\nX:" + to_string(dragForce.x) + ", Y: " + to_string(dragForce.y) + ", Z: " + to_string(dragForce.z)).c_str());
+					}
+					// buttons to reset position and speed
+					if (ImGui::Button("Reset position"))
+					{
+						obj->ResetPosition();
+					}
+					if (ImGui::Button("Reset speed"))
+					{
+						obj->GetRigidbody()->SetVelocity(XMFLOAT3(0.0f, 0.0f, 0.0f));
+						obj->GetRigidbody()->SetAcceleration(XMFLOAT3(0.0f, 0.0f, 0.0f));
+					}
+					ImGui::Checkbox("Drag", dragEnabled);
+					if (*dragEnabled)
+					{
+						static int e = 0;
+						if (ImGui::RadioButton("Laminar Drag", &e, 0))
+						{
+							obj->GetRigidbody()->SetUseLaminarDrag(true);
+						}
+						if (ImGui::RadioButton("Turbulent Drag", &e, 1))
+						{
+							obj->GetRigidbody()->SetUseLaminarDrag(false);
+						}
+
+						ImGui::SliderFloat("Drag Factor", obj->GetRigidbody()->GetDragFactor(), 0.0f, 1.0f);
+					}
+					ImGui::Text("Colliding: " + obj->GetRigidbody()->colliding ? "true" : "false");
+				}
+			}
+			else
+			{
+				ImGui::Text(obj->GetType().c_str());
 			}
 		}
 	}
 
 	ImVec2 v = ImGui::GetWindowSize();
 	ImGui::Text("%f %f", v.x, v.y);
-	ImGui::ShowStyleEditor();
 	ImGui::End();
 }
 

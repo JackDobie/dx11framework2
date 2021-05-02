@@ -26,6 +26,7 @@ public:
 	void SetPosition(float x, float y, float z) { transform->position.x = x; transform->position.y = y; transform->position.z = z; }
 	XMFLOAT3 GetPosition() const { return transform->position; }
 	void AddPosition(XMFLOAT3 pos);
+	void ResetPosition();
 
 	void SetRotation(XMFLOAT3 rotation) { transform->rotation = rotation; }
 	void SetRotation(float x, float y, float z) { transform->rotation.x = x; transform->rotation.y = y; transform->rotation.z = z; }
@@ -86,5 +87,7 @@ private:
 	float deltaTime;
 
 	float centreOfMass;
+
+	XMFLOAT3 originalPos;
 };
 
