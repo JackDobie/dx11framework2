@@ -968,8 +968,15 @@ void Application::DrawUI()
 					if (*obj->GetRigidbody()->GetRotating())
 					{
 						ImGui::SliderFloat("Angular Damp", obj->GetRigidbody()->GetAngularDamp(), 0.0f, 1.0f);
+
 						//TODO: add input for torque position and force
-						//ImGui::InputFloat3("Torque position", v);
+						XMFLOAT3* torquePoint = &obj->GetRigidbody()->GetTorquePoint();
+						float* f_torquePoint[3] = { &torquePoint->x, &torquePoint->y, &torquePoint->z };
+						ImGui::InputFloat3("Torque Position", *f_torquePoint);
+
+						XMFLOAT3* torqueForce = &obj->GetRigidbody()->GetTorqueForce();
+						float* f_torqueForce[3] = { &torqueForce->x, &torqueForce->y, &torqueForce->z };
+						ImGui::InputFloat3("Torque Force", *f_torqueForce);
 					}
 					else
 					{
@@ -993,7 +1000,7 @@ void Application::DrawUI()
 		ImGui::SliderFloat4("Diffuse Light", *temp2, 0.0f, 1.0f);
 
 		float* temp3[4] = { &basicLight.SpecularLight.x, &basicLight.SpecularLight.y, &basicLight.SpecularLight.z, &basicLight.SpecularLight.w };
-		ImGui::SliderFloat4("Speculaasdasdasdr Light", *temp3, 0.0f, 1.0f);
+		ImGui::SliderFloat4("Specular Light", *temp3, 0.0f, 1.0f);
 
 		float* tempfloat = &basicLight.SpecularPower;
 		ImGui::SliderFloat("SpecularPower", tempfloat, 0.1f, 50.0f);
