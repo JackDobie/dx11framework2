@@ -961,15 +961,13 @@ void Application::DrawUI()
 					ImGui::Checkbox("Drag", dragEnabled);
 					if (*dragEnabled)
 					{
-						//! these radios still control the others, most likely because of the static int controlling them.
-						//TODO: find a way to control radios without using static
-						static int e = 0;
-						if (ImGui::RadioButton("Laminar Drag", &e, 0))
+						int e =	obj->GetRigidbody()->GetUseLaminarDrag();
+						if (ImGui::RadioButton("Laminar Drag", &e, 1))
 						{
 							obj->GetRigidbody()->SetUseLaminarDrag(true);
 						}
 						ImGui::SameLine();
-						if (ImGui::RadioButton("Turbulent Drag", &e, 1))
+						if (ImGui::RadioButton("Turbulent Drag", &e, 0))
 						{
 							obj->GetRigidbody()->SetUseLaminarDrag(false);
 						}
