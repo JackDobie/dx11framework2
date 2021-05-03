@@ -97,19 +97,19 @@ void ParticleModel::UpdateNetForce()
 		if (thrustEnabled)
 		{
 			thrustForce = clamp(thrustForce, -10.0f, 10.0f);
-			netForce.y += thrustForce;
+			netForce.y += thrustForce * deltaTime;
 		}
 	}
 
 	if (enableDrag)
 	{
-		velocity.x -= drag.x;
-		velocity.y -= drag.y;
-		velocity.z -= drag.z;
+		velocity.x -= drag.x * deltaTime;
+		velocity.y -= drag.y * deltaTime;
+		velocity.z -= drag.z * deltaTime;
 
-		acceleration.x -= drag.x;
-		acceleration.y -= drag.y;
-		acceleration.z -= drag.z;
+		acceleration.x -= drag.x * deltaTime;
+		acceleration.y -= drag.y * deltaTime;
+		acceleration.z -= drag.z * deltaTime;
 	}
 }
 
