@@ -829,7 +829,6 @@ void Application::Update()
 
 void Application::Draw()
 {
-
     //
     // Clear buffers
     //

@@ -236,74 +236,74 @@ void ParticleModel::CreateAABB()
 	AABBFace face;
 
 	// front face
-	face.minX = geometry.centreOfMass.x - (geometry.modelDimensions.x / 2);
-	face.maxX = geometry.centreOfMass.x + (geometry.modelDimensions.x / 2);
+	face.minX = geometry.centreOfMass.x - ((geometry.modelDimensions.x / 2) * (transform->scale.x / 2));
+	face.maxX = geometry.centreOfMass.x + ((geometry.modelDimensions.x / 2) * (transform->scale.x / 2));
 
-	face.minY = geometry.centreOfMass.y - (geometry.modelDimensions.y / 2);
-	face.maxY = geometry.centreOfMass.y + (geometry.modelDimensions.y / 2);
+	face.minY = geometry.centreOfMass.y - ((geometry.modelDimensions.y / 2) * (transform->scale.y / 2));
+	face.maxY = geometry.centreOfMass.y + ((geometry.modelDimensions.y / 2) * (transform->scale.y / 2));
 
-	face.minZ = geometry.centreOfMass.z - (geometry.modelDimensions.z / 2);
-	face.maxZ = geometry.centreOfMass.z - (geometry.modelDimensions.z / 2);
+	face.minZ = geometry.centreOfMass.z - ((geometry.modelDimensions.z / 2) * (transform->scale.z / 2));
+	face.maxZ = geometry.centreOfMass.z - ((geometry.modelDimensions.z / 2) * (transform->scale.z / 2));
 	
 	AABBFaces.push_back(face);
 
 	// back face
-	face.minX = geometry.centreOfMass.x - ((geometry.modelDimensions.x / 2) * transform->scale.x);
-	face.maxX = geometry.centreOfMass.x + ((geometry.modelDimensions.x / 2) * transform->scale.x);
+	face.minX = geometry.centreOfMass.x - ((geometry.modelDimensions.x / 2) * (transform->scale.x / 2));
+	face.maxX = geometry.centreOfMass.x + ((geometry.modelDimensions.x / 2) * (transform->scale.x / 2));
 
-	face.minY = geometry.centreOfMass.y - ((geometry.modelDimensions.y / 2) * transform->scale.y);
-	face.maxY = geometry.centreOfMass.y + ((geometry.modelDimensions.y / 2) * transform->scale.y);
+	face.minY = geometry.centreOfMass.y - ((geometry.modelDimensions.y / 2) * (transform->scale.y / 2));
+	face.maxY = geometry.centreOfMass.y + ((geometry.modelDimensions.y / 2) * (transform->scale.y / 2));
 
-	face.minZ = geometry.centreOfMass.z + ((geometry.modelDimensions.z / 2) * transform->scale.z);
-	face.maxZ = geometry.centreOfMass.z + ((geometry.modelDimensions.z / 2) * transform->scale.z);
+	face.minZ = geometry.centreOfMass.z + ((geometry.modelDimensions.z / 2) * (transform->scale.z / 2));
+	face.maxZ = geometry.centreOfMass.z + ((geometry.modelDimensions.z / 2) * (transform->scale.z / 2));
 
 	AABBFaces.push_back(face);
 
 	// left face
-	face.minX = geometry.centreOfMass.x - ((geometry.modelDimensions.x / 2) * transform->scale.x);
-	face.maxX = geometry.centreOfMass.x - ((geometry.modelDimensions.x / 2) * transform->scale.x);
+	face.minX = geometry.centreOfMass.x - ((geometry.modelDimensions.x / 2) * (transform->scale.x / 2));
+	face.maxX = geometry.centreOfMass.x - ((geometry.modelDimensions.x / 2) * (transform->scale.x / 2));
 
-	face.minY = geometry.centreOfMass.y - ((geometry.modelDimensions.y / 2) * transform->scale.y);
-	face.maxY = geometry.centreOfMass.y + ((geometry.modelDimensions.y / 2) * transform->scale.y);
+	face.minY = geometry.centreOfMass.y - ((geometry.modelDimensions.y / 2) * (transform->scale.y / 2));
+	face.maxY = geometry.centreOfMass.y + ((geometry.modelDimensions.y / 2) * (transform->scale.y / 2));
 
-	face.minZ = geometry.centreOfMass.z - ((geometry.modelDimensions.z / 2) * transform->scale.z);
-	face.maxZ = geometry.centreOfMass.z + ((geometry.modelDimensions.z / 2) * transform->scale.z);
+	face.minZ = geometry.centreOfMass.z - ((geometry.modelDimensions.z / 2) * (transform->scale.z / 2));
+	face.maxZ = geometry.centreOfMass.z + ((geometry.modelDimensions.z / 2) * (transform->scale.z / 2));
 
 	AABBFaces.push_back(face);
 
 	// right face
-	face.minX = geometry.centreOfMass.x + ((geometry.modelDimensions.x / 2) * transform->scale.x);
-	face.maxX = geometry.centreOfMass.x + ((geometry.modelDimensions.x / 2) * transform->scale.x);
+	face.minX = geometry.centreOfMass.x + ((geometry.modelDimensions.x / 2) * (transform->scale.x / 2));
+	face.maxX = geometry.centreOfMass.x + ((geometry.modelDimensions.x / 2) * (transform->scale.x / 2));
 
-	face.minY = geometry.centreOfMass.y - ((geometry.modelDimensions.y / 2) * transform->scale.y);
-	face.maxY = geometry.centreOfMass.y + ((geometry.modelDimensions.y / 2) * transform->scale.y);
+	face.minY = geometry.centreOfMass.y - ((geometry.modelDimensions.y / 2) * (transform->scale.y / 2));
+	face.maxY = geometry.centreOfMass.y + ((geometry.modelDimensions.y / 2) * (transform->scale.y / 2));
 
-	face.minZ = geometry.centreOfMass.z - ((geometry.modelDimensions.z / 2) * transform->scale.z);
-	face.maxZ = geometry.centreOfMass.z + ((geometry.modelDimensions.z / 2) * transform->scale.z);
-
-	AABBFaces.push_back(face);
-
-	// top face
-	face.minX = geometry.centreOfMass.x - ((geometry.modelDimensions.x / 2) * transform->scale.x);
-	face.maxX = geometry.centreOfMass.x + ((geometry.modelDimensions.x / 2) * transform->scale.x);
-
-	face.minY = geometry.centreOfMass.y + ((geometry.modelDimensions.y / 2) * transform->scale.y);
-	face.maxY = geometry.centreOfMass.y + ((geometry.modelDimensions.y / 2) * transform->scale.y);
-
-	face.minZ = geometry.centreOfMass.z - ((geometry.modelDimensions.z / 2) * transform->scale.z);
-	face.maxZ = geometry.centreOfMass.z + ((geometry.modelDimensions.z / 2) * transform->scale.z);
+	face.minZ = geometry.centreOfMass.z - ((geometry.modelDimensions.z / 2) * (transform->scale.z / 2));
+	face.maxZ = geometry.centreOfMass.z + ((geometry.modelDimensions.z / 2) * (transform->scale.z / 2));
 
 	AABBFaces.push_back(face);
 
 	// top face
-	face.minX = geometry.centreOfMass.x - ((geometry.modelDimensions.x / 2) * transform->scale.x);
-	face.maxX = geometry.centreOfMass.x + ((geometry.modelDimensions.x / 2) * transform->scale.x);
+	face.minX = geometry.centreOfMass.x - ((geometry.modelDimensions.x / 2) * (transform->scale.x / 2));
+	face.maxX = geometry.centreOfMass.x + ((geometry.modelDimensions.x / 2) * (transform->scale.x / 2));
 
-	face.minY = geometry.centreOfMass.y - ((geometry.modelDimensions.y / 2) * transform->scale.y);
-	face.maxY = geometry.centreOfMass.y - ((geometry.modelDimensions.y / 2) * transform->scale.y);
+	face.minY = geometry.centreOfMass.y + ((geometry.modelDimensions.y / 2) * (transform->scale.y / 2));
+	face.maxY = geometry.centreOfMass.y + ((geometry.modelDimensions.y / 2) * (transform->scale.y / 2));
 
-	face.minZ = geometry.centreOfMass.z - ((geometry.modelDimensions.z / 2) * transform->scale.z);
-	face.maxZ = geometry.centreOfMass.z + ((geometry.modelDimensions.z / 2) * transform->scale.z);
+	face.minZ = geometry.centreOfMass.z - ((geometry.modelDimensions.z / 2) * (transform->scale.z / 2));
+	face.maxZ = geometry.centreOfMass.z + ((geometry.modelDimensions.z / 2) * (transform->scale.z / 2));
+
+	AABBFaces.push_back(face);
+
+	// top face
+	face.minX = geometry.centreOfMass.x - ((geometry.modelDimensions.x / 2) * (transform->scale.x / 2));
+	face.maxX = geometry.centreOfMass.x + ((geometry.modelDimensions.x / 2) * (transform->scale.x / 2));
+
+	face.minY = geometry.centreOfMass.y - ((geometry.modelDimensions.y / 2) * (transform->scale.y / 2));
+	face.maxY = geometry.centreOfMass.y - ((geometry.modelDimensions.y / 2) * (transform->scale.y / 2));
+
+	face.minZ = geometry.centreOfMass.z - ((geometry.modelDimensions.z / 2) * (transform->scale.z / 2));
+	face.maxZ = geometry.centreOfMass.z + ((geometry.modelDimensions.z / 2) * (transform->scale.z / 2));
 
 	AABBFaces.push_back(face);
 }
