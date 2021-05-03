@@ -58,7 +58,9 @@ public:
 	void SetAngularDamp(float newAngDamp) { angularDamp = newAngDamp; }
 
 	XMFLOAT3 GetTorquePoint() { return torquePoint; }
+	void SetTorquePoint(XMFLOAT3 newTP) { torquePoint = newTP; }
 	XMFLOAT3 GetTorqueForce() { return torqueForce; }
+	void SetTorqueForce(XMFLOAT3 newTF) { torqueForce = newTF; }
 private:
 	float angularDamp = 1.0f;
 	XMFLOAT3X3 inertiaTensor;

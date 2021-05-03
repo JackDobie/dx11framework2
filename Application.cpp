@@ -912,11 +912,27 @@ void Application::DrawUI()
 	ImGui::Begin("Control Window");
 	if (ImGui::CollapsingHeader("Objects"))//, ImGuiTreeNodeFlags_None)
 	{
+		static vector<string> headers;
+		
+		//auto collapse = [&](const char* label) {
+		//	using namespace ImGui;
+		//	ImGuiContext& g = *ImGui::GetCurrentContext();
+		//	ImGuiWindow* window = g.CurrentWindow;
+		//	ImGuiStorage* storage = window->DC.StateStorage;
+		//	storage->SetInt(window->GetID(label), 0/*is_open*/);
+		//};
+
 		for each (GameObject * obj in _gameObjects)
 		{
-			if (!(obj->GetType().find("Terrain") != string::npos))
+			string type = obj->GetType();
+			if (!(type.find("Terrain") != string::npos))
 			{
-				if (ImGui::CollapsingHeader(obj->GetType().c_str()))
+				if (!(find(headers.begin(), headers.end(), type) != headers.end()))
+				{
+					headers.push_back(type);
+				}
+
+				if (ImGui::CollapsingHeader(type.c_str()))
 				{
 					// display information on position and speed
 					XMFLOAT3 pos = obj->GetRigidbody()->GetPosition();
@@ -945,6 +961,8 @@ void Application::DrawUI()
 					ImGui::Checkbox("Drag", dragEnabled);
 					if (*dragEnabled)
 					{
+						//! these radios still control the others, most likely because of the static int controlling them.
+						//TODO: find a way to control radios without using static
 						static int e = 0;
 						if (ImGui::RadioButton("Laminar Drag", &e, 0))
 						{
@@ -956,31 +974,43 @@ void Application::DrawUI()
 							obj->GetRigidbody()->SetUseLaminarDrag(false);
 						}
 
-						ImGui::SliderFloat("Drag Factor", obj->GetRigidbody()->GetDragFactor(), 0.0f, 1.0f); //TODO: FIX THIS! currently affects both cubes
+						ImGui::SliderFloat("Drag Factor", obj->GetRigidbody()->GetDragFactor(), 0.0f, 1.0f);
 					}
 					if (obj->GetRigidbody()->colliding)
 						ImGui::Text("Colliding: true");
 					else
 						ImGui::Text("Colliding: false");
-					//ImGui::Text("Colliding: " + obj->GetRigidbody()->colliding ? "true" : "false");
 
 					ImGui::Checkbox("Rotate", obj->GetRigidbody()->GetRotating());
 					if (*obj->GetRigidbody()->GetRotating())
 					{
 						ImGui::SliderFloat("Angular Damp", obj->GetRigidbody()->GetAngularDamp(), 0.0f, 1.0f);
 
-						//TODO: add input for torque position and force
-						XMFLOAT3* torquePoint = &obj->GetRigidbody()->GetTorquePoint();
-						float* f_torquePoint[3] = { &torquePoint->x, &torquePoint->y, &torquePoint->z };
-						ImGui::InputFloat3("Torque Position", *f_torquePoint);
+						float torquePoint[3] = { obj->GetRigidbody()->GetTorquePoint().x, obj->GetRigidbody()->GetTorquePoint().y, obj->GetRigidbody()->GetTorquePoint().z };
+						ImGui::InputFloat3("Torque Position", torquePoint);
+						obj->GetRigidbody()->SetTorquePoint(XMFLOAT3(torquePoint[0], torquePoint[1], torquePoint[2]));
 
-						XMFLOAT3* torqueForce = &obj->GetRigidbody()->GetTorqueForce();
-						float* f_torqueForce[3] = { &torqueForce->x, &torqueForce->y, &torqueForce->z };
-						ImGui::InputFloat3("Torque Force", *f_torqueForce);
+						float torqueForce[3] = { obj->GetRigidbody()->GetTorqueForce().x, obj->GetRigidbody()->GetTorqueForce().y, obj->GetRigidbody()->GetTorqueForce().z };
+						ImGui::InputFloat3("Torque Force", torqueForce);
+						obj->GetRigidbody()->SetTorqueForce(XMFLOAT3(torqueForce[0], torqueForce[1], torqueForce[2]));
 					}
 					else
 					{
 						obj->GetRigidbody()->SetAngularDamp(0.0f);
+					}
+
+					for each (string head in headers)
+					{
+						if (head != type) // for every header other than this
+						{
+							auto it = find(headers.begin(), headers.end(), head);
+							int index = distance(headers.begin(), it);
+							const char* c = headers[index].c_str();
+							if (ImGui::GetStateStorage()->GetInt(ImGui::GetID(c)) != 0) // if other header is open
+							{
+								ImGui::GetStateStorage()->SetInt(ImGui::GetID(c), 0); // close header
+							}
+						}
 					}
 				}
 			}
