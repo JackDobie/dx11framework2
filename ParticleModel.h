@@ -111,6 +111,8 @@ private:
 	float deltaTime;
 
 	bool useGravity;
+	///<summary> if the object uses gravity, but it is disabled for whatever reason </summary>
+	bool enableGravity;
 	float gravityForce;
 
 	bool thrustEnabled;

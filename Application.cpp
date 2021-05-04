@@ -635,23 +635,6 @@ void Application::MoveBackward(int objectNumber)
 		_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, 10.0f));
 }
 
-//void Application::StopMoveLeft(int objectNumber)
-//{
-//	_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(10.0f, 0.0f, 0.0f));
-//}
-//void Application::StopMoveRight(int objectNumber)
-//{
-//	_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(-10.0f, 0.0f, 0.0f));
-//}
-//void Application::StopMoveForward(int objectNumber)
-//{
-//	_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, -10.0f));
-//}
-//void Application::StopMoveBackward(int objectNumber)
-//{
-//	_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, 10.0f));
-//}
-
 void Application::Update()
 {
     // Update our time
@@ -726,23 +709,18 @@ void Application::Update()
 			_gameObjects[1]->GetRigidbody()->SetThrustEnabled(false);
 	}
 
-	/*if (GetAsyncKeyState(0x45))
-	{
-		_gameObjects[1]->AddRotation(0.0f, 1.0f, 1.0f);
-	}*/
-
-	if (GetAsyncKeyState(0x45) & 0x0001) // E key
-	{
-		bool rot = *_gameObjects[1]->GetRigidbody()->GetRotating();
-		_gameObjects[1]->GetRigidbody()->SetRotating(!rot);
-		//_gameObjects[1]->GetRigidbody()->Rotate(deltaTime);
-	}
-	if (GetAsyncKeyState(0x52) & 0x0001) // R key
-	{
-		bool rot = *_gameObjects[2]->GetRigidbody()->GetRotating();
-		_gameObjects[2]->GetRigidbody()->SetRotating(!rot);
-		//_gameObjects[2]->GetRigidbody()->Rotate(deltaTime);
-	}
+	//if (GetAsyncKeyState(0x45) & 0x0001) // E key
+	//{
+	//	bool rot = *_gameObjects[1]->GetRigidbody()->GetRotating();
+	//	_gameObjects[1]->GetRigidbody()->SetRotating(!rot);
+	//	//_gameObjects[1]->GetRigidbody()->Rotate(deltaTime);
+	//}
+	//if (GetAsyncKeyState(0x52) & 0x0001) // R key
+	//{
+	//	bool rot = *_gameObjects[2]->GetRigidbody()->GetRotating();
+	//	_gameObjects[2]->GetRigidbody()->SetRotating(!rot);
+	//	//_gameObjects[2]->GetRigidbody()->Rotate(deltaTime);
+	//}
 
 	if (GetAsyncKeyState(0x57) < 0)//if W is pressed down
 	{
