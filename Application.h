@@ -100,6 +100,7 @@ private:
 	void MoveBackward(int objectNumber);
 
 	void DrawUI();
+	void Keyboard(float deltaTime);
 public:
 	Application();
 	~Application();
@@ -110,5 +111,7 @@ public:
 	void Draw();
 
 	void ResizeWindow(int height, int width);
+
+	bool focused;
 };
 

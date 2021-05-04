@@ -34,6 +34,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 
+	case WM_SETFOCUS:
+		if (application != nullptr)
+			application->focused = true;
+		break;
+
+	case WM_KILLFOCUS:
+		if (application != nullptr)
+			application->focused = false;
+		break;
+
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
@@ -113,6 +123,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	IM_ASSERT(font != NULL);
 
 	application = this;
+	focused = true;
 
 	// Setup the scene's light
 	basicLight.AmbientLight = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -663,109 +674,11 @@ void Application::Update()
 
 	DrawUI();
 
-	//https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
-	// Move gameobjects
-	if (GetAsyncKeyState(0x49) < 0) // I key
+	if (focused)
 	{
-		MoveForward(1);
-	}
-	if (GetAsyncKeyState(0x4B) < 0) // K key
-	{
-		MoveBackward(1);
-	}
-	if (GetAsyncKeyState(0x4A) < 0) // J key
-	{
-		MoveLeft(1);
-	}
-	if (GetAsyncKeyState(0x4C) < 0) // L key
-	{
-		MoveRight(1);
+		Keyboard(deltaTime);
 	}
 
-	if (GetAsyncKeyState(VK_NUMPAD8) < 0)
-	{
-		MoveForward(2);
-	}
-	if (GetAsyncKeyState(VK_NUMPAD2) < 0)
-	{
-		MoveBackward(2);
-	}
-	if (GetAsyncKeyState(VK_NUMPAD4) < 0)
-	{
-		MoveLeft(2);
-	}
-	if (GetAsyncKeyState(VK_NUMPAD6) < 0)
-	{
-		MoveRight(2);
-	}
-
-	if (GetAsyncKeyState(0x51) < 0) // Q key
-	{
-		_gameObjects[1]->GetRigidbody()->SetThrustEnabled(true);
-	}
-	else
-	{
-		if(_gameObjects[1]->GetRigidbody()->GetThrustEnabled())
-			_gameObjects[1]->GetRigidbody()->SetThrustEnabled(false);
-	}
-
-	//if (GetAsyncKeyState(0x45) & 0x0001) // E key
-	//{
-	//	bool rot = *_gameObjects[1]->GetRigidbody()->GetRotating();
-	//	_gameObjects[1]->GetRigidbody()->SetRotating(!rot);
-	//	//_gameObjects[1]->GetRigidbody()->Rotate(deltaTime);
-	//}
-	//if (GetAsyncKeyState(0x52) & 0x0001) // R key
-	//{
-	//	bool rot = *_gameObjects[2]->GetRigidbody()->GetRotating();
-	//	_gameObjects[2]->GetRigidbody()->SetRotating(!rot);
-	//	//_gameObjects[2]->GetRigidbody()->Rotate(deltaTime);
-	//}
-
-	if (GetAsyncKeyState(0x57) < 0)//if W is pressed down
-	{
-		//move cam forwards
-		_camera->Move(deltaTime);
-	}
-	else if (GetAsyncKeyState(0x53) < 0)//if S is pressed down
-	{
-		//move cam backwards
-		_camera->Move(-deltaTime);
-	}
-	if (GetAsyncKeyState(0x41) < 0)//if A is pressed down
-	{
-		//move cam left
-		_camera->Strafe(-deltaTime);
-	}
-	else if (GetAsyncKeyState(0x44) < 0)//if D is pressed down
-	{
-		//move cam right
-		_camera->Strafe(deltaTime);
-	}
-
-	if (GetAsyncKeyState(VK_UP) < 0) //if up arrow is pressed
-	{
-		//point cam up
-		_camera->AddAt(XMFLOAT3(0.0f, -150.0f * deltaTime, 0.0f));
-	}
-
-	else if (GetAsyncKeyState(VK_DOWN) < 0) //if down arrow is pressed
-	{
-		//point cam down
-		_camera->AddAt(XMFLOAT3(0.0f, 150.0f * deltaTime, 0.0f));
-	}
-
-	else if (GetAsyncKeyState(VK_LEFT) < 0) //if left arrow is pressed
-	{
-		//point cam left
-		_camera->AddAt(XMFLOAT3(0.0f, 0.0f, -150.0f * deltaTime));
-	}
-
-	else if (GetAsyncKeyState(VK_RIGHT) < 0) //if right arrow is pressed
-	{
-		//point cam right
-		_camera->AddAt(XMFLOAT3(0.0f, 0.0f, 150.0f * deltaTime));
-	}
 	_camera->Update();
 
 	// Update objects
@@ -1021,4 +934,121 @@ void Application::ResizeWindow(int height, int width)
 	_WindowHeight = height;
 	_WindowWidth = width;
 	_camera->Reshape(_WindowWidth, _WindowHeight);
+}
+
+void Application::Keyboard(float deltaTime)
+{
+	//https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+	// Move gameobjects
+	if (GetAsyncKeyState(0x49) < 0) // I key
+	{
+		MoveForward(1);
+	}
+	if (GetAsyncKeyState(0x4B) < 0) // K key
+	{
+		MoveBackward(1);
+	}
+	if (GetAsyncKeyState(0x4A) < 0) // J key
+	{
+		MoveLeft(1);
+	}
+	if (GetAsyncKeyState(0x4C) < 0) // L key
+	{
+		MoveRight(1);
+	}
+
+	if (GetAsyncKeyState(VK_NUMPAD8) < 0)
+	{
+		MoveForward(2);
+	}
+	if (GetAsyncKeyState(VK_NUMPAD2) < 0)
+	{
+		MoveBackward(2);
+	}
+	if (GetAsyncKeyState(VK_NUMPAD4) < 0)
+	{
+		MoveLeft(2);
+	}
+	if (GetAsyncKeyState(VK_NUMPAD6) < 0)
+	{
+		MoveRight(2);
+	}
+
+	if (GetAsyncKeyState(0x51) < 0) // Q key
+	{
+		_gameObjects[1]->GetRigidbody()->SetThrustEnabled(true);
+	}
+	else
+	{
+		if (_gameObjects[1]->GetRigidbody()->GetThrustEnabled())
+			_gameObjects[1]->GetRigidbody()->SetThrustEnabled(false);
+	}
+
+	if (GetAsyncKeyState(0x45) < 0) // E key
+	{
+		_gameObjects[2]->GetRigidbody()->SetThrustEnabled(true);
+	}
+	else
+	{
+		if (_gameObjects[2]->GetRigidbody()->GetThrustEnabled())
+			_gameObjects[2]->GetRigidbody()->SetThrustEnabled(false);
+	}
+
+	//if (GetAsyncKeyState(0x45) & 0x0001) // E key
+	//{
+	//	bool rot = *_gameObjects[1]->GetRigidbody()->GetRotating();
+	//	_gameObjects[1]->GetRigidbody()->SetRotating(!rot);
+	//	//_gameObjects[1]->GetRigidbody()->Rotate(deltaTime);
+	//}
+	//if (GetAsyncKeyState(0x52) & 0x0001) // R key
+	//{
+	//	bool rot = *_gameObjects[2]->GetRigidbody()->GetRotating();
+	//	_gameObjects[2]->GetRigidbody()->SetRotating(!rot);
+	//	//_gameObjects[2]->GetRigidbody()->Rotate(deltaTime);
+	//}
+
+	if (GetAsyncKeyState(0x57) < 0)//if W is pressed down
+	{
+		//move cam forwards
+		_camera->Move(deltaTime);
+	}
+	else if (GetAsyncKeyState(0x53) < 0)//if S is pressed down
+	{
+		//move cam backwards
+		_camera->Move(-deltaTime);
+	}
+	if (GetAsyncKeyState(0x41) < 0)//if A is pressed down
+	{
+		//move cam left
+		_camera->Strafe(-deltaTime);
+	}
+	else if (GetAsyncKeyState(0x44) < 0)//if D is pressed down
+	{
+		//move cam right
+		_camera->Strafe(deltaTime);
+	}
+
+	if (GetAsyncKeyState(VK_UP) < 0) //if up arrow is pressed
+	{
+		//point cam up
+		_camera->AddAt(XMFLOAT3(0.0f, -150.0f * deltaTime, 0.0f));
+	}
+
+	else if (GetAsyncKeyState(VK_DOWN) < 0) //if down arrow is pressed
+	{
+		//point cam down
+		_camera->AddAt(XMFLOAT3(0.0f, 150.0f * deltaTime, 0.0f));
+	}
+
+	else if (GetAsyncKeyState(VK_LEFT) < 0) //if left arrow is pressed
+	{
+		//point cam left
+		_camera->AddAt(XMFLOAT3(0.0f, 0.0f, -150.0f * deltaTime));
+	}
+
+	else if (GetAsyncKeyState(VK_RIGHT) < 0) //if right arrow is pressed
+	{
+		//point cam right
+		_camera->AddAt(XMFLOAT3(0.0f, 0.0f, 150.0f * deltaTime));
+	}
 }
