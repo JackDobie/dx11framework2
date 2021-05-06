@@ -64,6 +64,7 @@ private:
 	Light basicLight;
 
 	vector<GameObject *> _gameObjects;
+	GameObject* selectedObject;
 	
 	Camera * _camera = nullptr;
 	float _cameraOrbitRadius = 7.0f;
@@ -94,10 +95,10 @@ private:
 	HRESULT InitVertexBuffer();
 	HRESULT InitIndexBuffer();
 
-	void MoveLeft(int objectNumber);
-	void MoveRight(int objectNumber);
-	void MoveForward(int objectNumber);
-	void MoveBackward(int objectNumber);
+	void MoveLeft(GameObject* obj);
+	void MoveRight(GameObject* obj);
+	void MoveForward(GameObject* obj);
+	void MoveBackward(GameObject* obj);
 
 	void DrawUI();
 	void Keyboard(float deltaTime);

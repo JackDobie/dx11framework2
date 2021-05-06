@@ -133,6 +133,8 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	basicLight.LightVecW = XMFLOAT3(0.0f, 1.0f, -1.0f);
 
 	//set up objects
+	selectedObject = nullptr;
+
 	Geometry donutGeometry;
 	objMeshData = OBJLoader::Load("Models/donut.obj", _pd3dDevice);
 	donutGeometry.modelDimensions = objMeshData.ModelDimensions;
@@ -200,6 +202,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		gameObject = new GameObject("Cube " + to_string(i), cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(-2.0f + (i * 4.0f), 0.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f)), true, 2.5f, true, true);
 		gameObject->SetTextureRV(_pTextureRV);
 		_gameObjects.push_back(gameObject);
+		selectedObject = gameObject;
 	}
 	//gameObject = new GameObject("donut", donutGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f, 0.5f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 5.0f, false);
 	///*gameObject->SetScale(0.5f, 0.5f, 0.5f);
@@ -617,33 +620,33 @@ void Application::Cleanup()
 	ImGui::DestroyContext();
 }
 
-void Application::MoveLeft(int objectNumber)
+void Application::MoveLeft(GameObject* obj)
 {
-	if (!_gameObjects[objectNumber]->GetRigidbody()->colliding)
-		_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(-10.0f, 0.0f, 0.0f));
-	else if (_gameObjects[objectNumber]->GetRigidbody()->colliding)
-		_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(10.0f, 0.0f, 0.0f));
+	if (!obj->GetRigidbody()->colliding)
+		obj->GetRigidbody()->AddVelOrAcc(XMFLOAT3(-10.0f, 0.0f, 0.0f));
+	else if (obj->GetRigidbody()->colliding)
+		obj->GetRigidbody()->AddVelOrAcc(XMFLOAT3(10.0f, 0.0f, 0.0f));
 }
-void Application::MoveRight(int objectNumber)
+void Application::MoveRight(GameObject* obj)
 {
-	if (!_gameObjects[objectNumber]->GetRigidbody()->colliding)
-		_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(10.0f, 0.0f, 0.0f));
-	else if (_gameObjects[objectNumber]->GetRigidbody()->colliding)
-		_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(-10.0f, 0.0f, 0.0f));
+	if (!obj->GetRigidbody()->colliding)
+		obj->GetRigidbody()->AddVelOrAcc(XMFLOAT3(10.0f, 0.0f, 0.0f));
+	else if (obj->GetRigidbody()->colliding)
+		obj->GetRigidbody()->AddVelOrAcc(XMFLOAT3(-10.0f, 0.0f, 0.0f));
 }
-void Application::MoveForward(int objectNumber)
+void Application::MoveForward(GameObject* obj)
 {
-	if(!_gameObjects[objectNumber]->GetRigidbody()->colliding)
-		_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, 10.0f));
-	else if(_gameObjects[objectNumber]->GetRigidbody()->colliding)
-		_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, -10.0f));
+	if(!obj->GetRigidbody()->colliding)
+		obj->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, 10.0f));
+	else if(obj->GetRigidbody()->colliding)
+		obj->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, -10.0f));
 }
-void Application::MoveBackward(int objectNumber)
+void Application::MoveBackward(GameObject* obj)
 {
-	if (!_gameObjects[objectNumber]->GetRigidbody()->colliding)
-		_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, -10.0f));
-	else if (_gameObjects[objectNumber]->GetRigidbody()->colliding)
-		_gameObjects[objectNumber]->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, 10.0f));
+	if (!obj->GetRigidbody()->colliding)
+		obj->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, -10.0f));
+	else if (obj->GetRigidbody()->colliding)
+		obj->GetRigidbody()->AddVelOrAcc(XMFLOAT3(0.0f, 0.0f, 10.0f));
 }
 
 void Application::Update()
@@ -667,10 +670,6 @@ void Application::Update()
 	{
 		dwTimeStart = dwTimeCur;
 	}
-
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
 
 	DrawUI();
 
@@ -799,6 +798,10 @@ void Application::Draw()
 
 void Application::DrawUI()
 {
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
 	ImGui::Begin("Control Window");
 	if (ImGui::CollapsingHeader("Objects"))//, ImGuiTreeNodeFlags_None)
 	{
@@ -831,6 +834,18 @@ void Application::DrawUI()
 					bool* dragEnabled = obj->GetRigidbody()->GetDragEnabled();
 					XMFLOAT3 dragForce = obj->GetRigidbody()->GetDragForce();
 					bool* rotating = obj->GetRigidbody()->GetRotating();
+					if (selectedObject != obj)
+					{
+						if (ImGui::Button("Select GameObject"))
+						{
+							selectedObject = obj;
+						}
+					}
+					else
+					{
+						ImGui::Button("Object Selected");
+					}
+
 					ImGui::Text(("Position:\nX:" + to_string(pos.x) + ", Y: " + to_string(pos.y) + ", Z: " + to_string(pos.z)).c_str());
 					ImGui::Text(("Velocity:\nX:" + to_string(vel.x) + ", Y: " + to_string(vel.y) + ", Z: " + to_string(vel.z)).c_str());
 					ImGui::Text(("Acceleration:\nX:" + to_string(accel.x) + ", Y: " + to_string(accel.y) + ", Z: " + to_string(accel.z)).c_str());
@@ -940,24 +955,25 @@ void Application::Keyboard(float deltaTime)
 {
 	//https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 	// Move gameobjects
-	if (GetAsyncKeyState(0x49) < 0) // I key
+
+	if (GetAsyncKeyState(VK_UP) < 0) //if up arrow is pressed
 	{
-		MoveForward(1);
+		MoveForward(selectedObject);
 	}
-	if (GetAsyncKeyState(0x4B) < 0) // K key
+	else if (GetAsyncKeyState(VK_DOWN) < 0) //if down arrow is pressed
 	{
-		MoveBackward(1);
+		MoveBackward(selectedObject);
 	}
-	if (GetAsyncKeyState(0x4A) < 0) // J key
+	if (GetAsyncKeyState(VK_LEFT) < 0) //if left arrow is pressed
 	{
-		MoveLeft(1);
+		MoveLeft(selectedObject);
 	}
-	if (GetAsyncKeyState(0x4C) < 0) // L key
+	else if (GetAsyncKeyState(VK_RIGHT) < 0) //if right arrow is pressed
 	{
-		MoveRight(1);
+		MoveRight(selectedObject);
 	}
 
-	if (GetAsyncKeyState(VK_NUMPAD8) < 0)
+	/*if (GetAsyncKeyState(VK_NUMPAD8) < 0)
 	{
 		MoveForward(2);
 	}
@@ -972,40 +988,17 @@ void Application::Keyboard(float deltaTime)
 	if (GetAsyncKeyState(VK_NUMPAD6) < 0)
 	{
 		MoveRight(2);
-	}
+	}*/
 
-	if (GetAsyncKeyState(0x51) < 0) // Q key
+	if (GetAsyncKeyState(VK_SPACE) < 0)
 	{
-		_gameObjects[1]->GetRigidbody()->SetThrustEnabled(true);
+		selectedObject->GetRigidbody()->SetThrustEnabled(true);
 	}
 	else
 	{
-		if (_gameObjects[1]->GetRigidbody()->GetThrustEnabled())
-			_gameObjects[1]->GetRigidbody()->SetThrustEnabled(false);
+		if (selectedObject->GetRigidbody()->GetThrustEnabled())
+			selectedObject->GetRigidbody()->SetThrustEnabled(false);
 	}
-
-	if (GetAsyncKeyState(0x45) < 0) // E key
-	{
-		_gameObjects[2]->GetRigidbody()->SetThrustEnabled(true);
-	}
-	else
-	{
-		if (_gameObjects[2]->GetRigidbody()->GetThrustEnabled())
-			_gameObjects[2]->GetRigidbody()->SetThrustEnabled(false);
-	}
-
-	//if (GetAsyncKeyState(0x45) & 0x0001) // E key
-	//{
-	//	bool rot = *_gameObjects[1]->GetRigidbody()->GetRotating();
-	//	_gameObjects[1]->GetRigidbody()->SetRotating(!rot);
-	//	//_gameObjects[1]->GetRigidbody()->Rotate(deltaTime);
-	//}
-	//if (GetAsyncKeyState(0x52) & 0x0001) // R key
-	//{
-	//	bool rot = *_gameObjects[2]->GetRigidbody()->GetRotating();
-	//	_gameObjects[2]->GetRigidbody()->SetRotating(!rot);
-	//	//_gameObjects[2]->GetRigidbody()->Rotate(deltaTime);
-	//}
 
 	if (GetAsyncKeyState(0x57) < 0)//if W is pressed down
 	{
@@ -1028,27 +1021,20 @@ void Application::Keyboard(float deltaTime)
 		_camera->Strafe(deltaTime);
 	}
 
-	if (GetAsyncKeyState(VK_UP) < 0) //if up arrow is pressed
+	if (GetAsyncKeyState(0x49) < 0) // I key
 	{
-		//point cam up
 		_camera->AddAt(XMFLOAT3(0.0f, -150.0f * deltaTime, 0.0f));
 	}
-
-	else if (GetAsyncKeyState(VK_DOWN) < 0) //if down arrow is pressed
+	if (GetAsyncKeyState(0x4B) < 0) // K key
 	{
-		//point cam down
 		_camera->AddAt(XMFLOAT3(0.0f, 150.0f * deltaTime, 0.0f));
 	}
-
-	else if (GetAsyncKeyState(VK_LEFT) < 0) //if left arrow is pressed
+	if (GetAsyncKeyState(0x4A) < 0) // J key
 	{
-		//point cam left
 		_camera->AddAt(XMFLOAT3(0.0f, 0.0f, -150.0f * deltaTime));
 	}
-
-	else if (GetAsyncKeyState(VK_RIGHT) < 0) //if right arrow is pressed
+	if (GetAsyncKeyState(0x4C) < 0) // L key
 	{
-		//point cam right
 		_camera->AddAt(XMFLOAT3(0.0f, 0.0f, 150.0f * deltaTime));
 	}
 }
