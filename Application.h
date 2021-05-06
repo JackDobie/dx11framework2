@@ -77,8 +77,8 @@ private:
 	UINT _WindowWidth;
 
 	// Render dimensions - Change here to alter screen resolution
-	UINT _renderHeight = 1080;
-	UINT _renderWidth = 1920;
+	UINT _renderHeight = 720;
+	UINT _renderWidth = 1280;
 
 	ID3D11DepthStencilState* DSLessEqual;
 	ID3D11RasterizerState* RSCullNone;

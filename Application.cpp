@@ -34,15 +34,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 
-	case WM_SETFOCUS:
+	case WM_SETFOCUS: // Called on window focus
+	{
 		if (application != nullptr)
 			application->focused = true;
 		break;
+	}
 
-	case WM_KILLFOCUS:
+	case WM_KILLFOCUS: // Called on loss of window focus
+	{
 		if (application != nullptr)
 			application->focused = false;
 		break;
+	}
 
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
@@ -119,7 +123,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(_hWnd);
 	ImGui_ImplDX11_Init(_pd3dDevice, _pImmediateContext);
-	ImFont* font = io.Fonts->AddFontFromFileTTF("Fonts/ProggyVector Regular.ttf", 25.0f);
+	ImFont* font = io.Fonts->AddFontFromFileTTF("Fonts/ProggyVector Regular.ttf", 16.0f);
 	IM_ASSERT(font != NULL);
 
 	application = this;
@@ -700,11 +704,8 @@ void Application::Update()
 						{
 							static int k = 0;
 							Debug::Print(to_string(k++) + _gameObjects[i]->GetType() + " has collided with " + _gameObjects[j]->GetType() + "\n");
-							_gameObjects[i]->GetRigidbody()->Collide(_gameObjects[j]->GetTransform()->position, _gameObjects[j]->GetRigidbody()->GetAABBFaces());
-							//_gameObjects[j]->GetRigidbody()->Collide(_gameObjects[i]->GetTransform()->position, _gameObjects[i]->GetRigidbody()->GetBoundingSphereRadius());
-							
 							//_gameObjects[i] respond to collision
-							// get velocity and reflect or something? or just reset vel/accel
+							_gameObjects[i]->GetRigidbody()->Collide(_gameObjects[j]->GetTransform()->position, _gameObjects[j]->GetRigidbody()->GetAABBFaces());
 						}
 					}
 				}
@@ -803,17 +804,9 @@ void Application::DrawUI()
 	ImGui::NewFrame();
 
 	ImGui::Begin("Control Window");
-	if (ImGui::CollapsingHeader("Objects"))//, ImGuiTreeNodeFlags_None)
+	if (ImGui::CollapsingHeader("Objects"))
 	{
 		static vector<string> headers;
-		
-		//auto collapse = [&](const char* label) {
-		//	using namespace ImGui;
-		//	ImGuiContext& g = *ImGui::GetCurrentContext();
-		//	ImGuiWindow* window = g.CurrentWindow;
-		//	ImGuiStorage* storage = window->DC.StateStorage;
-		//	storage->SetInt(window->GetID(label), 0/*is_open*/);
-		//};
 
 		for each (GameObject * obj in _gameObjects)
 		{
@@ -972,23 +965,6 @@ void Application::Keyboard(float deltaTime)
 	{
 		MoveRight(selectedObject);
 	}
-
-	/*if (GetAsyncKeyState(VK_NUMPAD8) < 0)
-	{
-		MoveForward(2);
-	}
-	if (GetAsyncKeyState(VK_NUMPAD2) < 0)
-	{
-		MoveBackward(2);
-	}
-	if (GetAsyncKeyState(VK_NUMPAD4) < 0)
-	{
-		MoveLeft(2);
-	}
-	if (GetAsyncKeyState(VK_NUMPAD6) < 0)
-	{
-		MoveRight(2);
-	}*/
 
 	if (GetAsyncKeyState(VK_SPACE) < 0)
 	{
