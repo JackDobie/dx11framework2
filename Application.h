@@ -39,9 +39,6 @@ private:
 	ID3D11PixelShader*      _pPixelShader;
 	ID3D11InputLayout*      _pVertexLayout;
 
-	//ID3D11Buffer*           _pVertexBuffer;
-	//ID3D11Buffer*           _pIndexBuffer;
-
 	ID3D11Buffer*           _pPlaneVertexBuffer;
 	ID3D11Buffer*           _pPlaneIndexBuffer;
 

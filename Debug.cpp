@@ -1,9 +1,5 @@
 #include "Debug.h"
 
-Debug::Debug()
-{
-}
-
 void Debug::Print(string output)
 {
 	OutputDebugStringA(output.c_str());
@@ -28,8 +24,3 @@ void Debug::Print(XMFLOAT3 output)
 	string out = "X:" + x + ", Y:" + y + ", Z:" + z + "\n";
 	OutputDebugStringA(out.c_str());
 }
-//void Debug::Print(bool output)
-//{
-//	string out = output == true ? "true\n" : "false\n";
-//	OutputDebugStringA(out.c_str());
-//}

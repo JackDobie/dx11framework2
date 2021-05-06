@@ -21,10 +21,6 @@ public:
 		inertiaTensor._32 = 0;
 		inertiaTensor._33 = 0.08333333333 * objectMass * ((modelDimensions.x * modelDimensions.x) + (modelDimensions.y * modelDimensions.y));
 
-		/*inertiaTensor = XMFLOAT3X3((1 / 12) * objectMass * ((modelDimensions.y * modelDimensions.y) + (modelDimensions.z * modelDimensions.z)), 0, 0,
-									0, (1 / 12) * objectMass * ((modelDimensions.x * modelDimensions.x) + (modelDimensions.z * modelDimensions.z)), 0,
-									0, 0, (1 / 12) * objectMass * ((modelDimensions.x * modelDimensions.x) + (modelDimensions.y * modelDimensions.y)));*/
-
 		angularAcceleration = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 		angularVelocity = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 		orientation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);

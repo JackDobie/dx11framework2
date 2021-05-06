@@ -30,7 +30,6 @@ public:
 
 	void SetRotation(XMFLOAT3 rotation) { transform->rotation = rotation; }
 	void SetRotation(float x, float y, float z) { transform->rotation.x = x; transform->rotation.y = y; transform->rotation.z = z; }
-	//void SetRotation(XMMATRIX rotMatrix) { mRotation = rotMatrix; }
 	XMFLOAT3 GetRotation() const { return transform->rotation; }
 	void AddRotation(float x, float y, float z);
 
@@ -55,9 +54,6 @@ public:
 	Transform* GetTransform() { return transform; }
 	void SetTransform(Transform* newTra) { transform = newTra; }
 
-	//ParticleModel* GetParticleModel() { return particleModel; }
-	//void SetParticleModel(ParticleModel* newParticleModel) { particleModel = newParticleModel; }
-
 	Rigidbody* GetRigidbody() { return rbd; }
 	void SetRigidbody(Rigidbody* newRbd) { rbd = newRbd; }
 
@@ -74,7 +70,6 @@ public:
 private:
 	Transform* transform;
 
-	//ParticleModel* particleModel;
 	Rigidbody* rbd;
 	Appearance* appearance;
 

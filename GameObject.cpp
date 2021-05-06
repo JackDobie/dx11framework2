@@ -7,7 +7,6 @@ GameObject::GameObject(string type, Geometry geometry, Material material, Transf
 
 	_parent = nullptr;
 	transform = _transform;
-	//particleModel = new ParticleModel(transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime);
 	rbd = new Rigidbody(geometry.modelDimensions, transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime, enableCollision, geometry);
 	mRotation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
 	originalPos = transform->position;
@@ -21,7 +20,6 @@ GameObject::~GameObject()
 		delete transform;
 		transform = nullptr;
 	}
-	//if (particleModel != nullptr) delete(particleModel);
 	if (rbd)
 	{
 		delete rbd;

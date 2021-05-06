@@ -43,10 +43,7 @@ void Terrain::MakePlane(UINT m, UINT n, UINT width, UINT depth, string heightmap
 			vertex.TexC.y = i * (m - 1);
 	
 			verts[i * n + j] = vertex;
-	
-			//x += dx;
 		}
-		//z += dz;
 	}
 
 	D3D11_BUFFER_DESC bd;
