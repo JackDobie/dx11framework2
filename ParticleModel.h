@@ -50,6 +50,7 @@ public:
 	void SetGravity(bool gravity) { useGravity = gravity; }
 
 	vector<XMFLOAT3> GetForces() { return forces; }
+	void ClearForces();
 	/// <summary> Adds a force to add constant acceleration to the object </summary>
 	void AddForce(XMFLOAT3 newForce) { forces.push_back(newForce); }
 	/// <summary> Adds a force to add constant acceleration to the object </summary>

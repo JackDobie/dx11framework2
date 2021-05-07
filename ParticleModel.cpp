@@ -308,3 +308,16 @@ void ParticleModel::CreateAABB()
 
 	AABBFaces.push_back(face);
 }
+
+void ParticleModel::ClearForces()
+{
+	netForce.x = 0;
+	netForce.y = 0;
+	netForce.z = 0;
+
+	forces.clear();
+
+	acceleration.x = clamp(acceleration.x, -15.0f, 15.0f);
+	acceleration.y = clamp(acceleration.y, -15.0f, 15.0f);
+	acceleration.z = clamp(acceleration.z, -15.0f, 15.0f);
+}

@@ -919,6 +919,33 @@ void Application::DrawUI()
 							}
 						}
 					}
+
+					if (ImGui::CollapsingHeader("Forces"))
+					{
+						Rigidbody* rbd = obj->GetRigidbody();
+						
+						for (int i = 0; i < rbd->GetForces().size(); i++)
+						{
+							ImGui::Text(("X: " + to_string(rbd->GetForces()[i].x) + ", Y: " + to_string(rbd->GetForces()[i].y) + ", Z: " + to_string(rbd->GetForces()[i].z)).c_str());
+						}
+
+						static float inputf3[3]{ 0.0f,0.0f,0.0f };
+						ImGui::InputFloat3("Force Direction", inputf3);
+						if (ImGui::Button("Add force"))
+						{
+							XMFLOAT3 inputxmf3 = XMFLOAT3(inputf3[0], inputf3[1], inputf3[2]);
+							rbd->AddForce(inputxmf3);
+							
+							inputf3[0] = 0.0f;
+							inputf3[1] = 0.0f;
+							inputf3[2] = 0.0f;
+						}
+
+						if (ImGui::Button("Clear forces"))
+						{
+							rbd->ClearForces();
+						}
+					}
 				}
 			}
 			else
@@ -928,7 +955,7 @@ void Application::DrawUI()
 		}
 	}
 
-	if (ImGui::CollapsingHeader("Lighting"))//, ImGuiTreeNodeFlags_None)
+	if (ImGui::CollapsingHeader("Lighting"))
 	{
 		float* temp[4] = { &basicLight.AmbientLight.x, &basicLight.AmbientLight.y, &basicLight.AmbientLight.z, &basicLight.AmbientLight.w };
 		ImGui::SliderFloat4("Ambient Light", *temp, 0.0f, 1.0f);
@@ -945,6 +972,7 @@ void Application::DrawUI()
 		float* temp4[3] = { &basicLight.LightVecW.x, &basicLight.LightVecW.y, &basicLight.LightVecW.z };
 		ImGui::InputFloat3("Light Vector", *temp4);
 	}
+
 	ImGui::End();
 }
 
