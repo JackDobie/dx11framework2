@@ -62,11 +62,11 @@ void ParticleModel::AddAcceleration(XMFLOAT3 addAcc)
 	float clamprangeAdd = 2;
 	float clamprangeAcc = 15;
 	acceleration.x += clamp(addAcc.x, -clamprangeAdd, clamprangeAdd);
-	acceleration.y += clamp(addAcc.y, -clamprangeAdd, clamprangeAdd);
+	acceleration.y += clamp(addAcc.y, -clamprangeAdd * 10, clamprangeAdd);
 	acceleration.z += clamp(addAcc.z, -clamprangeAdd, clamprangeAdd);
 
 	acceleration.x = clamp(acceleration.x, -clamprangeAcc, clamprangeAcc);
-	acceleration.y = clamp(acceleration.y, -clamprangeAcc, clamprangeAcc);
+	acceleration.y = clamp(acceleration.y, -clamprangeAcc * 10, clamprangeAcc);
 	acceleration.z = clamp(acceleration.z, -clamprangeAcc, clamprangeAcc);
 }
 
@@ -155,7 +155,7 @@ void ParticleModel::Move()
 
 	float clamprange = 10;
 	velocity.x = clamp(velocity.x, -clamprange, clamprange);
-	velocity.y = clamp(velocity.y, -clamprange * 8, clamprange * 2);
+	velocity.y = clamp(velocity.y, -clamprange * 10, clamprange * 2);
 	velocity.z = clamp(velocity.z, -clamprange, clamprange);
 }
 

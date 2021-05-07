@@ -61,9 +61,6 @@ public:
 	void Update(float t);
 	void Draw(ID3D11DeviceContext * pImmediateContext);
 
-	float GetCentre() { return centreOfMass; }
-	void SetCentre(float newCentre) { centreOfMass = newCentre; }
-
 	XMMATRIX mRotation;
 private:
 	Transform* transform;
@@ -76,8 +73,6 @@ private:
 	XMFLOAT4X4 _world;
 
 	float deltaTime;
-
-	float centreOfMass;
 
 	XMFLOAT3 originalPos;
 };

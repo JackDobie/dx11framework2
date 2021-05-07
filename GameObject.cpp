@@ -40,7 +40,7 @@ void GameObject::Update(float t)
 	XMMATRIX mScale = XMMatrixScaling(transform->scale.x, transform->scale.y, transform->scale.z);
 	
 	//create rotation matrix
-	if (_type.find("Cube") != string::npos)
+	if (!(_type.find("Terrain") != string::npos))
 	{
 		if (*rbd->GetRotating())
 		{

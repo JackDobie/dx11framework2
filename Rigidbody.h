@@ -26,7 +26,7 @@ public:
 		orientation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
 		qOrientation = Quaternion();
 		rotating = false;
-		torquePoint = XMFLOAT3(0.5f, 1.0f, 0.5f);
+		torquePoint = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		torqueForce = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	}
 

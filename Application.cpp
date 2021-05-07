@@ -201,13 +201,15 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 	_gameObjects.push_back(gameObject);
 
-	for (int i = 0; i < NUMBER_OF_CUBES; i++)
-	{
-		gameObject = new GameObject("Cube " + to_string(i), cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(-2.0f + (i * 4.0f), 0.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f)), true, 2.5f, true, true);
-		gameObject->SetTextureRV(_pTextureRV);
-		_gameObjects.push_back(gameObject);
-		selectedObject = gameObject;
-	}
+	gameObject = new GameObject("Cube", cubeGeometry, shinyMaterial, new Transform(XMFLOAT3(2.0f, 0.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f)), true, 2.5f, true, true);
+	gameObject->SetTextureRV(_pTextureRV);
+	_gameObjects.push_back(gameObject);
+	selectedObject = gameObject;
+
+	gameObject = new GameObject("Donut", donutGeometry, shinyMaterial, new Transform(XMFLOAT3(6.0f, 0.0f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f)), true, 2.5f, true, true);
+	gameObject->SetTextureRV(_pTextureRV);
+	_gameObjects.push_back(gameObject);
+
 	//gameObject = new GameObject("donut", donutGeometry, shinyMaterial, new Transform(XMFLOAT3(-4.0f, 0.5f, 10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.5f, 0.5f, 0.5f)), true, 5.0f, false);
 	///*gameObject->SetScale(0.5f, 0.5f, 0.5f);
 	//gameObject->SetPosition(-4.0f, 0.5f, 10.0f);*/
@@ -893,13 +895,38 @@ void Application::DrawUI()
 					{
 						ImGui::SliderFloat("Angular Damp", obj->GetRigidbody()->GetAngularDamp(), 0.0f, 1.0f);
 
-						float torquePoint[3] = { obj->GetRigidbody()->GetTorquePoint().x, obj->GetRigidbody()->GetTorquePoint().y, obj->GetRigidbody()->GetTorquePoint().z };
+						static float torquePoint[3] = { obj->GetRigidbody()->GetTorquePoint().x, obj->GetRigidbody()->GetTorquePoint().y, obj->GetRigidbody()->GetTorquePoint().z };
 						ImGui::InputFloat3("Torque Position", torquePoint);
-						obj->GetRigidbody()->SetTorquePoint(XMFLOAT3(torquePoint[0], torquePoint[1], torquePoint[2]));
 
-						float torqueForce[3] = { obj->GetRigidbody()->GetTorqueForce().x, obj->GetRigidbody()->GetTorqueForce().y, obj->GetRigidbody()->GetTorqueForce().z };
+						static float torqueForce[3] = { obj->GetRigidbody()->GetTorqueForce().x, obj->GetRigidbody()->GetTorqueForce().y, obj->GetRigidbody()->GetTorqueForce().z };
 						ImGui::InputFloat3("Torque Force", torqueForce);
-						obj->GetRigidbody()->SetTorqueForce(XMFLOAT3(torqueForce[0], torqueForce[1], torqueForce[2]));
+
+						if (ImGui::Button("Apply"))
+						{
+							obj->GetRigidbody()->SetTorquePoint(XMFLOAT3(torquePoint[0], torquePoint[1], torquePoint[2]));
+							obj->GetRigidbody()->SetTorqueForce(XMFLOAT3(torqueForce[0], torqueForce[1], torqueForce[2]));
+						}
+
+						if (ImGui::CollapsingHeader("Presets"))
+						{
+							XMFLOAT3 force = XMFLOAT3(1.0f, 1.0f, 1.0f);
+
+							if (ImGui::Button("Front face, left edge"))
+							{
+								obj->GetRigidbody()->SetTorquePoint(XMFLOAT3(-1.0f, 0.0f, 1.0f));
+								obj->GetRigidbody()->SetTorqueForce(force);
+							}
+							if (ImGui::Button("Front face, top edge"))
+							{
+								obj->GetRigidbody()->SetTorquePoint(XMFLOAT3(-1.0f, 1.0f, 0.5f));
+								obj->GetRigidbody()->SetTorqueForce(force);
+							}
+							if (ImGui::Button("Front face, right edge"))
+							{
+								obj->GetRigidbody()->SetTorquePoint(XMFLOAT3(-1.0f, 0.0f, 0.0f));
+								obj->GetRigidbody()->SetTorqueForce(force);
+							}
+						}
 					}
 					else
 					{

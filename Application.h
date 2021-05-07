@@ -18,10 +18,10 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
+#include <DirectXMathVector.inl>
 
 using namespace DirectX;
 
-#define NUMBER_OF_CUBES 2
 #define FPS_60 1.0f/60.0f
 
 class Application
