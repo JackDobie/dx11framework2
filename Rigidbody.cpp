@@ -31,7 +31,7 @@ XMMATRIX Rigidbody::CalcOrientation(float deltaTime)
 {
 	XMFLOAT3 angVelV3;
 	XMStoreFloat3(&angVelV3, angularVelocity);
-	qOrientation.addScaledVector(Vector3(angVelV3), deltaTime);
+	qOrientation.addScaledVector(angVelV3, deltaTime);
 	qOrientation.normalise();
 	CalculateTransformMatrixRowMajor(orientation, GetPosition(), qOrientation);
 	return orientation;

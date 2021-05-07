@@ -24,7 +24,6 @@
     <ClInclude Include="OBJLoader.h" />
     <ClInclude Include="Structures.h" />
     <ClInclude Include="Debug.h" />
-    <ClInclude Include="Vector.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="ParticleModel.h" />
     <ClInclude Include="Appearance.h" />
@@ -64,7 +63,6 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
     <ClCompile Include="Debug.cpp" />
-    <ClCompile Include="Vector.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="ParticleModel.cpp" />
     <ClCompile Include="Appearance.cpp" />

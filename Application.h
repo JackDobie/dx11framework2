@@ -64,11 +64,6 @@ private:
 	GameObject* selectedObject;
 	
 	Camera * _camera = nullptr;
-	float _cameraOrbitRadius = 7.0f;
-	float _cameraOrbitRadiusMin = 2.0f;
-	float _cameraOrbitRadiusMax = 50.0f;
-	float _cameraOrbitAngleXZ = -90.0f;
-	float _cameraSpeed = 2.0f;
 
 	UINT _WindowHeight;
 	UINT _WindowWidth;

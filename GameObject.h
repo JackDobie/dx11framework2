@@ -49,8 +49,6 @@ public:
 	ID3D11ShaderResourceView * GetTextureRV() const { return appearance->textureRV; }
 	bool HasTexture() const { return appearance->textureRV ? true : false; }
 
-	void SetParent(GameObject * parent) { _parent = parent; }
-
 	Transform* GetTransform() { return transform; }
 	void SetTransform(Transform* newTra) { transform = newTra; }
 
@@ -76,8 +74,6 @@ private:
 	string _type;
 
 	XMFLOAT4X4 _world;
-
-	GameObject * _parent;
 
 	float deltaTime;
 

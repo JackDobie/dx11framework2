@@ -5,7 +5,6 @@ GameObject::GameObject(string type, Geometry geometry, Material material, Transf
 	_type = type;
 	appearance = new Appearance(geometry, material, nullptr);
 
-	_parent = nullptr;
 	transform = _transform;
 	rbd = new Rigidbody(geometry.modelDimensions, transform, _useConstAccel, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), mass, gravity, deltaTime, enableCollision, geometry);
 	mRotation = XMMatrixRotationRollPitchYaw(transform->rotation.x, transform->rotation.y, transform->rotation.z);
@@ -64,11 +63,6 @@ void GameObject::Update(float t)
 	XMMATRIX mTranslation = XMMatrixTranslation(transform->position.x, transform->position.y, transform->position.z);
 
 	XMStoreFloat4x4(&_world, mScale * mRotation * mTranslation);
-
-	if (_parent != nullptr)
-	{
-		XMStoreFloat4x4(&_world, this->GetWorldMatrix() * _parent->GetWorldMatrix());
-	}
 
 	rbd->Update(t);
 }
