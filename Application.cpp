@@ -856,16 +856,27 @@ void Application::DrawUI()
 						obj->GetRigidbody()->SetVelocity(XMFLOAT3(0.0f, 0.0f, 0.0f));
 						obj->GetRigidbody()->SetAcceleration(XMFLOAT3(0.0f, 0.0f, 0.0f));
 					}
+					int v = obj->GetRigidbody()->GetUseConstAccel();
+					if (ImGui::RadioButton("Constant Acceleration", &v, 1))
+					{
+						obj->GetRigidbody()->SetUsingConstAccel(true);
+					}
+					ImGui::SameLine();
+					if (ImGui::RadioButton("Constant Velocity", &v, 0))
+					{
+						obj->GetRigidbody()->SetUsingConstAccel(false);
+					}
+
 					ImGui::Checkbox("Drag", dragEnabled);
 					if (*dragEnabled)
 					{
-						int e =	obj->GetRigidbody()->GetUseLaminarDrag();
-						if (ImGui::RadioButton("Laminar Drag", &e, 1))
+						int _v = obj->GetRigidbody()->GetUseLaminarDrag();
+						if (ImGui::RadioButton("Laminar Drag", &_v, 1))
 						{
 							obj->GetRigidbody()->SetUseLaminarDrag(true);
 						}
 						ImGui::SameLine();
-						if (ImGui::RadioButton("Turbulent Drag", &e, 0))
+						if (ImGui::RadioButton("Turbulent Drag", &_v, 0))
 						{
 							obj->GetRigidbody()->SetUseLaminarDrag(false);
 						}

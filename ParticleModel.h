@@ -38,6 +38,7 @@ public:
 
 	void AddVelOrAcc(XMFLOAT3 addF3);
 
+	bool GetCollisionEnabled() { return useCollision; }
 	void SetUsingConstAccel(bool _useConstAccel) { useConstAccel = _useConstAccel; }
 
 	float objectMass;
@@ -61,19 +62,10 @@ public:
 	bool GetThrustEnabled() { return thrustEnabled; }
 	void SetThrustEnabled(bool isEnabled) { thrustEnabled = isEnabled; }
 
-	//float GetBoundingSphereRadius() { return boundingSphereRadius; }
-	//void SetBoundingSphereRadius(float newRadius) { boundingSphereRadius = newRadius;/* enableBoundingSphere = newRadius > 0.0f ? true : false;*/ }
-	//bool GetBoundingSphereEnabled() { return enableBoundingSphere; }
-	void SetCollisionEnabled(bool enabled) { useCollision = enabled; }
-	bool GetCollisionEnabled() { return useCollision; }
-
 	vector<AABBFace> GetAABBFaces() { return AABBFaces; }
 
 	bool CheckCollision(XMFLOAT3 otherPos, vector<AABBFace> otherFaces);
-	//bool SphereCollisionCheck(XMFLOAT3 otherPos, float otherRadius);
-	//bool CollisionCheck(GameObject* otherObject); //including gameobject breaks code. do not use this
 	void Collide(XMFLOAT3 otherPos, vector<AABBFace> otherFaces);
-	//void SphereCollide(XMFLOAT3 otherPos, float otherRadius);
 
 	bool colliding;
 
@@ -82,6 +74,9 @@ public:
 	void SetUseLaminarDrag(bool enabled) { useLaminarDrag = enabled; }
 	XMFLOAT3 GetDragForce() { return drag; }
 	float* GetDragFactor() { return &dragFactor; }
+
+	bool GetUseConstAccel() { return useConstAccel; }
+	void SetUseConstAccel(bool enable) { useConstAccel = enable; }
 private:
 	void Move();
 

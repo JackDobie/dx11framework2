@@ -13,7 +13,7 @@ ParticleModel::ParticleModel(Transform* _transform, bool _useConstAccel, XMFLOAT
 	deltaTime = _deltaTime;
 	gravityForce = 0.5f;
 	dragFactor = 0.1f;
-	drag = XMFLOAT3(0, 0, 0);
+	drag = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	thrustEnabled = false;
 	thrustForce = (objectMass * gravityForce) * 1.5f;
 	useCollision = enableCollision;
@@ -157,14 +157,6 @@ void ParticleModel::Move()
 	velocity.x = clamp(velocity.x, -clamprange, clamprange);
 	velocity.y = clamp(velocity.y, -clamprange * 8, clamprange * 2);
 	velocity.z = clamp(velocity.z, -clamprange, clamprange);
-	//Debug::Print(velocity);
-
-	/*if(acceleration.x > 0.0f)
-		acceleration.x -= 0.1f;
-	if(acceleration.y > 0.0f)
-		acceleration.y -= 0.1f;
-	if(acceleration.z > 0.0f)
-		acceleration.z -= 0.1f;*/
 }
 
 void ParticleModel::MotionInFluid()
