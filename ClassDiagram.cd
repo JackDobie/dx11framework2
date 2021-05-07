@@ -88,29 +88,8 @@
       <FileName>Transform.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Struct Name="DDS_PIXELFORMAT" Collapsed="true">
-    <Position X="17.5" Y="5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAQAAAAAAAAQAAAIAAAAAAAAAAAAAAAAAAACAFIAQ=</HashCode>
-      <FileName>DDSTextureLoader.cpp</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="DDS_HEADER" Collapsed="true">
-    <Position X="21" Y="4" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAASAAAAAAAgQIQIAAIAAEgAAAAAAAAAAQIAAAAAQ=</HashCode>
-      <FileName>DDSTextureLoader.cpp</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="DDS_HEADER_DXT10" Collapsed="true">
-    <Position X="22.75" Y="4" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAABAAAgAAAAAAACAAAAAAAAAAAQAAAAAAAgAAAAAAA=</HashCode>
-      <FileName>DDSTextureLoader.cpp</FileName>
-    </TypeIdentifier>
-  </Struct>
   <Struct Name="SimpleVertex" Collapsed="true">
-    <Position X="21" Y="6" Width="1.5" />
+    <Position X="18" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACIAAAAAAAgAABAAAA=</HashCode>
       <FileName>Structures.h</FileName>
@@ -138,21 +117,21 @@
     </TypeIdentifier>
   </Struct>
   <Struct Name="Vector3" Collapsed="true">
-    <Position X="17.5" Y="7" Width="1.5" />
+    <Position X="18" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAABgAQAAAAA=</HashCode>
       <FileName>Structures.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="AABBFace" Collapsed="true">
-    <Position X="15.75" Y="3.25" Width="1.5" />
+    <Position X="16.25" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHAAAAA=</HashCode>
       <FileName>Structures.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="SurfaceInfo" Collapsed="true">
-    <Position X="22.75" Y="6" Width="1.5" />
+    <Position X="16.25" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAIAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
       <FileName>Structures.h</FileName>
@@ -166,32 +145,11 @@
     </TypeIdentifier>
   </Struct>
   <Struct Name="ConstantBuffer" Collapsed="true">
-    <Position X="19.25" Y="4" Width="1.5" />
+    <Position X="16.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAAAAAAAEBAAAAAAAAQAAAAAAAIBAAAAAAAAAAAQAAA=</HashCode>
       <FileName>Structures.h</FileName>
     </TypeIdentifier>
   </Struct>
-  <Struct Name="`anonymous-namespace'::handle_closer" Collapsed="true">
-    <Position X="21" Y="5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>DDSTextureLoader.cpp</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Enum Name="DDS_MISC_FLAGS2" Collapsed="true">
-    <Position X="19.25" Y="8.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
-      <FileName>DDSTextureLoader.cpp</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="DirectX::DDS_ALPHA_MODE" Collapsed="true">
-    <Position X="17.5" Y="8.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAIAAAAAAAAAAAAAAAAAACAAAAAQAAAQAAAAAAAAABA=</HashCode>
-      <FileName>DDSTextureLoader.h</FileName>
-    </TypeIdentifier>
-  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>
